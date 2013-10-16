@@ -23,6 +23,8 @@ import com.omertron.omdbapi.OMDBException;
 import com.omertron.omdbapi.emumerations.PlotType;
 import com.omertron.omdbapi.emumerations.ResponseType;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -129,11 +131,11 @@ public class OmdbUrlBuilder {
 
         sb.append(DELIMITER_FIRST);
         if (StringUtils.isNotBlank(search)) {
-            sb.append(PARAM_SEARCH).append(search);
+            sb.append(PARAM_SEARCH).append(search.replace(" ", "+"));
         } else if (StringUtils.isNotBlank(imdb)) {
             sb.append(PARAM_IMDB).append(imdb);
         } else if (StringUtils.isNotBlank(title)) {
-            sb.append(PARAM_TITLE).append(title);
+            sb.append(PARAM_TITLE).append(title.replace(" ", "+"));
         } else {
             throw new OMDBException(OMDBException.OMDBExceptionType.INVALID_URL, "Must include a search or ID");
         }

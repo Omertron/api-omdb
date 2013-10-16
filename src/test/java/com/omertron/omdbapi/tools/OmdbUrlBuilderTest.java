@@ -19,6 +19,7 @@
  */
 package com.omertron.omdbapi.tools;
 
+import com.omertron.omdbapi.TestLogger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -61,17 +62,21 @@ public class OmdbUrlBuilderTest {
     public void testCreateUrl1() throws Exception {
         LOG.info("createUrl1");
 
-        String expResult = "http://www.omdbapi.com/?s=Star Wars&y=1977";
+        String expResult = "http://www.omdbapi.com/?s=Star+Wars&y=1977";
         String result = new OmdbUrlBuilder().setSearch("Star Wars").setYear(1977).create();
 
         assertEquals("Failed text search", expResult, result);
+
+        ApiHttpClient x = new ApiHttpClient();
+        String webpage = x.requestContent(result);
+        LOG.info(webpage);
     }
 
     @Test
     public void testCreateUrl2() throws Exception {
         LOG.info("createUrl2");
 
-        String expResult = "http://www.omdbapi.com/?t=True Grit&y=1969";
+        String expResult = "http://www.omdbapi.com/?t=True+Grit&y=1969";
         String result = new OmdbUrlBuilder().setTitle("True Grit").setYear(1969).create();
 
         assertEquals("Failed title search", expResult, result);

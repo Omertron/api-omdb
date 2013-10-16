@@ -17,7 +17,7 @@
  *      along with the FanartTV API.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.omertron.omdbapi.tools;
+package com.omertron.omdbapi;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

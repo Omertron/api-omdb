@@ -19,7 +19,9 @@
  */
 package com.omertron.omdbapi;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.omertron.omdbapi.emumerations.PlotType;
+import com.omertron.omdbapi.tools.ApiHttpClient;
 import com.omertron.omdbapi.tools.OmdbUrlBuilder;
 import java.net.URL;
 import org.apache.commons.lang3.StringUtils;
@@ -35,13 +37,15 @@ public class OmdbApi {
     private static PlotType plotLength = PlotType.getDefault();
     private static String callback = "";
     private static final int DEFAULT_YEAR = 0;
+    // Jackson JSON configuration
+    private static ObjectMapper mapper = new ObjectMapper();
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
      * Create an instance of the API with the default HTTP Client
      */
     public OmdbApi() {
-        this.httpClient = null;
+        this.httpClient = new ApiHttpClient();
     }
 
     /**
