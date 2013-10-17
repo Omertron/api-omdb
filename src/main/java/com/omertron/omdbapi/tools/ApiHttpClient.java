@@ -1,23 +1,20 @@
 /*
- *      Copyright (c) 2004-2013 YAMJ Members
- *      https://github.com/organizations/YAMJ/teams
+ *      Copyright (c) 2013 Stuart Boston
  *
- *      This file is part of the Yet Another Media Jukebox (YAMJ).
+ *      This file is part of the OMDB API.
  *
- *      The YAMJ is free software: you can redistribute it and/or modify
+ *      The OMDB API is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
  *      the Free Software Foundation, either version 3 of the License, or
  *      any later version.
  *
- *      YAMJ is distributed in the hope that it will be useful,
+ *      The OMDB API is distributed in the hope that it will be useful,
  *      but WITHOUT ANY WARRANTY; without even the implied warranty of
  *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *      GNU General Public License for more details.
  *
  *      You should have received a copy of the GNU General Public License
- *      along with the YAMJ.  If not, see <http://www.gnu.org/licenses/>.
- *
- *      Web: https://github.com/YAMJ/yamj-v3
+ *      along with the OMDB API.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 package com.omertron.omdbapi.tools;

@@ -1,7 +1,7 @@
 /*
  *      Copyright (c) 2013 Stuart Boston
  *
- *      This file is part of OMDB API.
+ *      This file is part of the OMDB API.
  *
  *      OMDB API is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  *      GNU General Public License for more details.
  *
  *      You should have received a copy of the GNU General Public License
- *      along with TheMovieDB API.  If not, see <http://www.gnu.org/licenses/>.
+ *      along with the OMDB API.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 package com.omertron.omdbapi.tools;

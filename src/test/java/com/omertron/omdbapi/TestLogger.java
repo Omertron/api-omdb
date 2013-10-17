@@ -1,7 +1,7 @@
 /*
- *      Copyright (c) 2004-2013 Stuart Boston
+ *      Copyright (c) 2013 Stuart Boston
  *
- *      This file is part of the FanartTV API.
+ *      This file is part of the OMDB API.
  *
  *      The FanartTV API is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  *      GNU General Public License for more details.
  *
  *      You should have received a copy of the GNU General Public License
- *      along with the FanartTV API.  If not, see <http://www.gnu.org/licenses/>.
+ *      along with the OMDB API.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 package com.omertron.omdbapi;
@@ -49,6 +49,8 @@ public class TestLogger {
         config.append("java.util.logging.SimpleFormatter.format = [%1$tc %4$s] %2$s - %5$s %6$s%n").append(CRLF);
         // Exclude http logging
         config.append("sun.net.www.protocol.http.HttpURLConnection.level = OFF").append(CRLF);
+        config.append("org.apache.http.level = OFF").append(CRLF);
+        config.append("org.apache.http.impl.client.level = OFF").append(CRLF);
 
         InputStream ins = new ByteArrayInputStream(config.toString().getBytes());
         try {

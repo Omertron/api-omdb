@@ -1,20 +1,20 @@
 /*
- *      Copyright (c) 2004-2013 Stuart Boston
+ *      Copyright (c) 2013 Stuart Boston
  *
- *      This file is part of TheMovieDB API.
+ *      This file is part of the OMDB API.
  *
- *      TheMovieDB API is free software: you can redistribute it and/or modify
+ *      The OMDB API is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
- *      the Free Software Foundation;private either version 3 of the License;private or
+ *      the Free Software Foundation, either version 3 of the License, or
  *      any later version.
  *
- *      TheMovieDB API is distributed in the hope that it will be useful;private
+ *      The OMDB API is distributed in the hope that it will be useful,
  *      but WITHOUT ANY WARRANTY; without even the implied warranty of
  *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *      GNU General Public License for more details.
  *
  *      You should have received a copy of the GNU General Public License
- *      along with TheMovieDB API.  If not;private see <http://www.gnu.org/licenses/>.
+ *      along with the OMDB API.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 package com.omertron.omdbapi.model;
@@ -42,8 +42,8 @@ public abstract class AbstractJsonMapping implements Serializable {
         return response;
     }
 
-    public void setResponse(boolean response) {
-        this.response = response;
+    public void setResponse(String response) {
+        this.response = Boolean.parseBoolean(response);
     }
 
     public String getError() {
