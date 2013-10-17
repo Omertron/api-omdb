@@ -1,42 +1,53 @@
 /*
  *      Copyright (c) 2013 Stuart Boston
  *
- *      This file is part of OMDB API.
+ *      This file is part of the OMDB API.
  *
- *      OMDB API is free software: you can redistribute it and/or modify
+ *      The OMDB API is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
  *      the Free Software Foundation, either version 3 of the License, or
  *      any later version.
  *
- *      OMDB API is distributed in the hope that it will be useful,
+ *      The OMDB API is distributed in the hope that it will be useful,
  *      but WITHOUT ANY WARRANTY; without even the implied warranty of
  *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *      GNU General Public License for more details.
  *
  *      You should have received a copy of the GNU General Public License
- *      along with TheMovieDB API.  If not, see <http://www.gnu.org/licenses/>.
+ *      along with the OMDB API.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 package com.omertron.omdbapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.omertron.omdbapi.emumerations.PlotType;
+import com.omertron.omdbapi.model.OmdbVideoFull;
 import com.omertron.omdbapi.tools.ApiHttpClient;
 import com.omertron.omdbapi.tools.OmdbUrlBuilder;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.methods.HttpGet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yamj.api.common.http.CommonHttpClient;
 
+/**
+ * The main class for the OMDB API
+ *
+ * TODO: Add proxy/timeout support for the local http client
+ *
+ * @author stuart.boston
+ */
 public class OmdbApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(OmdbApi.class);
-    private CommonHttpClient httpClient;
-    private static boolean tomatoes = Boolean.FALSE;
-    private static PlotType plotLength = PlotType.getDefault();
-    private static String callback = "";
     private static final int DEFAULT_YEAR = 0;
+    private CommonHttpClient httpClient;
+    private boolean tomatoes = Boolean.FALSE;
+    private PlotType plotLength = PlotType.getDefault();
+    private String callback = "";
     // Jackson JSON configuration
     private static ObjectMapper mapper = new ObjectMapper();
 
@@ -64,8 +75,8 @@ public class OmdbApi {
      *
      * @return TRUE will add the data, FALSE will not.
      */
-    public static boolean isTomatoes() {
-        return tomatoes;
+    public boolean isTomatoes() {
+        return this.tomatoes;
     }
 
     /**
@@ -75,8 +86,8 @@ public class OmdbApi {
      *
      * @param defaultTomatoes
      */
-    public static void setTomatoes(boolean defaultTomatoes) {
-        OmdbApi.tomatoes = defaultTomatoes;
+    public void setTomatoes(boolean defaultTomatoes) {
+        this.tomatoes = defaultTomatoes;
     }
 
     /**
@@ -86,8 +97,8 @@ public class OmdbApi {
      *
      * @return
      */
-    public static String getPlotLength() {
-        return plotLength.toString();
+    public PlotType getPlotLength() {
+        return this.plotLength;
     }
 
     /**
@@ -95,8 +106,8 @@ public class OmdbApi {
      *
      * @param defaultLongPlot
      */
-    public static void setLongPlot() {
-        OmdbApi.plotLength = PlotType.LONG;
+    public void setLongPlot() {
+        this.plotLength = PlotType.LONG;
     }
 
     /**
@@ -104,8 +115,8 @@ public class OmdbApi {
      *
      * @param defaultLongPlot
      */
-    public static void setShortPlot() {
-        OmdbApi.plotLength = PlotType.SHORT;
+    public void setShortPlot() {
+        this.plotLength = PlotType.SHORT;
     }
 
     /**
@@ -113,8 +124,8 @@ public class OmdbApi {
      *
      * @return
      */
-    public static String getCallback() {
-        return callback;
+    public String getCallback() {
+        return this.callback;
     }
 
     /**
@@ -122,10 +133,29 @@ public class OmdbApi {
      *
      * @param callbackParameter
      */
-    public static void setCallback(String callback) {
-        OmdbApi.callback = callback;
+    public void setCallback(String callback) {
+        this.callback = callback;
     }
     //</editor-fold>
+
+    private String requestWebPage(URL url) throws OMDBException {
+        String webpage;
+
+        LOG.trace("Requesting: {}", url.toString());
+        try {
+            HttpGet httpGet = new HttpGet(url.toURI());
+            httpGet.addHeader("accept", "application/json");
+            webpage = httpClient.requestContent(httpGet);
+        } catch (URISyntaxException ex) {
+            throw new OMDBException(OMDBException.OMDBExceptionType.CONNECTION_ERROR, null, ex);
+        } catch (IOException ex) {
+            throw new OMDBException(OMDBException.OMDBExceptionType.CONNECTION_ERROR, null, ex);
+        } catch (RuntimeException ex) {
+            throw new OMDBException(OMDBException.OMDBExceptionType.HTTP_503_ERROR, "Service Unavailable", ex);
+        }
+
+        return webpage;
+    }
 
     /**
      * Get a list of movies using the movie title.
@@ -153,11 +183,22 @@ public class OmdbApi {
      * @param query
      * @return
      */
-    public String movieInfo(String query) throws OMDBException {
+    public OmdbVideoFull movieInfo(String query) throws OMDBException {
         return movieInfo(query, DEFAULT_YEAR, plotLength, tomatoes);
     }
 
-    public String movieInfo(String query, int year, PlotType plotType, boolean tomatoes) throws OMDBException {
+    /**
+     * Get movie information using the title or IMDB ID and with specific plot length & RT data
+     *
+     * @param query
+     * @param year
+     * @param plotType
+     * @param tomatoes
+     * @return
+     * @throws OMDBException
+     */
+    public OmdbVideoFull movieInfo(String query, int year, PlotType plotType, boolean tomatoes) throws OMDBException {
+        OmdbVideoFull video;
         URL url;
         OmdbUrlBuilder base = new OmdbUrlBuilder();
 
@@ -168,9 +209,28 @@ public class OmdbApi {
             // Title query
             base = base.setTitle(query);
         }
+        // Set the rest of the parameters
+        base = base.setYear(year).setPlot(plotType).setTomatoes(tomatoes);
 
+        // Get the URL
         url = base.createUrl();
 
-        return url.toString();
+        String jsonData;
+
+        // Get the JSON
+        jsonData = requestWebPage(url);
+
+        LOG.info("JSON: {}", jsonData); // XXX DEBUG
+
+        // Process the JSON into an object
+        try {
+            video = mapper.readValue(jsonData, OmdbVideoFull.class);
+            LOG.info("Video: {}", video.toString());
+
+        } catch (IOException ex) {
+            throw new OMDBException(OMDBException.OMDBExceptionType.MAPPING_FAILED, jsonData, ex);
+        }
+
+        return video;
     }
 }

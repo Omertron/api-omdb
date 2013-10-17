@@ -1,28 +1,27 @@
 /*
- *      Copyright (c) 2004-2013 YAMJ Members
- *      http://code.google.com/p/moviejukebox/people/list
+ *      Copyright (c) 2013 Stuart Boston
  *
- *      This file is part of the Yet Another Media Jukebox (YAMJ).
+ *      This file is part of the OMDB API.
  *
- *      The YAMJ is free software: you can redistribute it and/or modify
+ *      The OMDB API is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
  *      the Free Software Foundation, either version 3 of the License, or
  *      any later version.
  *
- *      YAMJ is distributed in the hope that it will be useful,
+ *      The OMDB API is distributed in the hope that it will be useful,
  *      but WITHOUT ANY WARRANTY; without even the implied warranty of
  *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *      GNU General Public License for more details.
  *
  *      You should have received a copy of the GNU General Public License
- *      along with the YAMJ.  If not, see <http://www.gnu.org/licenses/>.
- *
- *      Web: http://code.google.com/p/moviejukebox/
+ *      along with the OMDB API.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
 package com.omertron.omdbapi;
 
 import com.omertron.omdbapi.emumerations.PlotType;
+import com.omertron.omdbapi.model.OmdbVideoFull;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -40,12 +39,14 @@ public class OmdbApiTest {
     // Logger
 
     private static final Logger LOG = LoggerFactory.getLogger(OmdbApiTest.class);
+    private static final OmdbApi omdb = new OmdbApi();
 
     public OmdbApiTest() {
     }
 
     @BeforeClass
     public static void setUpClass() {
+        TestLogger.Configure();
     }
 
     @AfterClass
@@ -61,100 +62,61 @@ public class OmdbApiTest {
     }
 
     /**
-     * Test of isTomatoes method, of class OmdbApi.
+     * Test of Rotten Tomatoes methods, of class OmdbApi.
      */
     @Test
-    public void testIsTomatoes() {
-        LOG.info("isTomatoes");
-        boolean expResult = false;
-        boolean result = OmdbApi.isTomatoes();
-        assertEquals("Default Rotten Tomatoes has changed", expResult, result);
-    }
-
-    /**
-     * Test of setTomatoes method, of class OmdbApi.
-     */
-    @Test
-    public void testSetTomatoes() {
-        LOG.info("setTomatoes");
+    public void testTomatoes() {
+        LOG.info("testTomatoes");
         boolean defaultTomatoes = false;
-        OmdbApi.setTomatoes(defaultTomatoes);
-        assertEquals("Failed to set rotten tomatoes default (" + defaultTomatoes + ")", defaultTomatoes, OmdbApi.isTomatoes());
+        omdb.setTomatoes(defaultTomatoes);
+        assertEquals("Failed to set rotten tomatoes default (" + defaultTomatoes + ")", defaultTomatoes, omdb.isTomatoes());
+
         defaultTomatoes = true;
-        OmdbApi.setTomatoes(defaultTomatoes);
-        assertEquals("Failed to set rotten tomatoes default (" + defaultTomatoes + ")", defaultTomatoes, OmdbApi.isTomatoes());
+        omdb.setTomatoes(defaultTomatoes);
+        assertEquals("Failed to set rotten tomatoes default (" + defaultTomatoes + ")", defaultTomatoes, omdb.isTomatoes());
     }
 
     /**
-     * Test of getPlotLength method, of class OmdbApi.
+     * Test of PlotType methods, of class OmdbApi.
      */
     @Test
-    public void testGetPlotLength() {
-        LOG.info("getPlotLength");
-        String expResult = "";
-        String result = OmdbApi.getPlotLength();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testPlotType() {
+        LOG.info("testPlotType");
+        omdb.setLongPlot();
+        assertEquals("Failed to set long plot", PlotType.LONG, omdb.getPlotLength());
+
+        omdb.setShortPlot();
+        assertEquals("Failed to set short plot", PlotType.SHORT, omdb.getPlotLength());
     }
 
     /**
-     * Test of setLongPlot method, of class OmdbApi.
+     * Test of Callback methods, of class OmdbApi.
      */
     @Test
-    public void testSetLongPlot() {
-        LOG.info("setLongPlot");
-        OmdbApi.setLongPlot();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of setShortPlot method, of class OmdbApi.
-     */
-    @Test
-    public void testSetShortPlot() {
-        LOG.info("setShortPlot");
-        OmdbApi.setShortPlot();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getCallback method, of class OmdbApi.
-     */
-    @Test
-    public void testGetCallback() {
+    public void testCallback() {
         LOG.info("getCallback");
-        String expResult = "";
-        String result = OmdbApi.getCallback();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
 
-    /**
-     * Test of setCallback method, of class OmdbApi.
-     */
-    @Test
-    public void testSetCallback() {
-        LOG.info("setCallback");
-        String callback = "";
-        OmdbApi.setCallback(callback);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        String callback1 = "This is my callback?!?";
+        String callback2 = "I need a better callback!!";
+
+        omdb.setCallback(callback1);
+        String result = omdb.getCallback();
+        assertEquals("Callback was not set/read correctly", callback1, result);
+
+        omdb.setCallback(callback2);
+        result = omdb.getCallback();
+        assertEquals("Callback was not set/read correctly", callback2, result);
     }
 
     /**
      * Test of search method, of class OmdbApi.
      */
-    @Test
+//    @Test
     public void testSearch_String() throws Exception {
         LOG.info("search");
         String title = "";
-        OmdbApi instance = new OmdbApi();
         String expResult = "";
-        String result = instance.search(title);
+        String result = omdb.search(title);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -166,29 +128,33 @@ public class OmdbApiTest {
     @Test
     public void testSearch_String_int() throws Exception {
         LOG.info("search");
-        String title = "";
+        String title = "Star Wars";
         int year = 0;
-        OmdbApi instance = new OmdbApi();
         String expResult = "";
-        String result = instance.search(title, year);
+        String result = omdb.search(title, year);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
      * Test of movieInfo method, of class OmdbApi.
      */
     @Test
-    public void testMovieInfo_String() throws Exception {
-        LOG.info("movieInfo");
-        String query = "";
-        OmdbApi instance = new OmdbApi();
-        String expResult = "";
-        String result = instance.movieInfo(query);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testMovieInfo_ByName() throws Exception {
+        LOG.info("movieInfo_ByName");
+        String query = "Blade Runner";
+        OmdbVideoFull result = omdb.movieInfo(query);
+        assertEquals("Wrong movie returned", "tt0083658", result.getImdbID());
+    }
+
+    /**
+     * Test of movieInfo method, of class OmdbApi.
+     */
+    @Test
+    public void testMovieInfo_ByTT() throws Exception {
+        LOG.info("movieInfo_ByTT");
+        String query = "tt0083658";
+        OmdbVideoFull result = omdb.movieInfo(query);
+        assertEquals("Wrong movie returned", "Blade Runner", result.getTitle());
     }
 
     /**
@@ -197,15 +163,15 @@ public class OmdbApiTest {
     @Test
     public void testMovieInfo_4args() throws Exception {
         LOG.info("movieInfo");
-        String query = "";
-        int year = 0;
-        PlotType plotType = null;
-        boolean tomatoes = false;
-        OmdbApi instance = new OmdbApi();
-        String expResult = "";
-        String result = instance.movieInfo(query, year, plotType, tomatoes);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
+        OmdbVideoFull result = omdb.movieInfo("Blade Runner", 1982, PlotType.LONG, true);
+        assertNotNull("Null object returned", result);
+        assertTrue("Error with call", result.isResponse());
+        assertEquals("Wrong video returned", "tt0083658", result.getImdbID());
+        assertTrue("No RT data", StringUtils.isNotBlank(result.getTomatoConsensus()));
+
+        result = omdb.movieInfo("Some movie that can't be found at all", 0, PlotType.SHORT, false);
+        assertNotNull("Null object returned", result);
+        assertFalse("What do you mean this was found?", result.isResponse());
     }
 }
