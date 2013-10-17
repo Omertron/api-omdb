@@ -19,7 +19,7 @@ public enum PlotType {
      * @return
      */
     public static boolean isDefault(PlotType plotType) {
-        return plotType == DEFAULT;
+        return plotType.equals(DEFAULT);
     }
 
     /**

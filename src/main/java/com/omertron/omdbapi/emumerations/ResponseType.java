@@ -19,7 +19,7 @@ public enum ResponseType {
      * @return
      */
     public static boolean isDefault(ResponseType responseType) {
-        return responseType == DEFAULT;
+        return responseType.equals(DEFAULT);
     }
 
     /**

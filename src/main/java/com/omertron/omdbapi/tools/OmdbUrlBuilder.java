@@ -23,8 +23,6 @@ import com.omertron.omdbapi.OMDBException;
 import com.omertron.omdbapi.emumerations.PlotType;
 import com.omertron.omdbapi.emumerations.ResponseType;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
