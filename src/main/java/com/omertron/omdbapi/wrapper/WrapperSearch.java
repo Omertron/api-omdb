@@ -20,7 +20,6 @@
 package com.omertron.omdbapi.wrapper;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRootName;
 import com.omertron.omdbapi.model.AbstractJsonMapping;
 import com.omertron.omdbapi.model.OmdbVideoBasic;
 import java.util.List;
