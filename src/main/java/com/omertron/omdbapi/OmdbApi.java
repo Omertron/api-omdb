@@ -24,6 +24,7 @@ import com.omertron.omdbapi.emumerations.PlotType;
 import com.omertron.omdbapi.model.OmdbVideoFull;
 import com.omertron.omdbapi.tools.ApiHttpClient;
 import com.omertron.omdbapi.tools.OmdbUrlBuilder;
+import com.omertron.omdbapi.wrapper.WrapperSearch;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -32,6 +33,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yamj.api.common.http.CommonHttpClient;
+import static com.omertron.omdbapi.OMDBException.*;
 
 /**
  * The main class for the OMDB API
@@ -147,11 +149,11 @@ public class OmdbApi {
             httpGet.addHeader("accept", "application/json");
             webpage = httpClient.requestContent(httpGet);
         } catch (URISyntaxException ex) {
-            throw new OMDBException(OMDBException.OMDBExceptionType.CONNECTION_ERROR, null, ex);
+            throw new OMDBException(OMDBExceptionType.CONNECTION_ERROR, null, ex);
         } catch (IOException ex) {
-            throw new OMDBException(OMDBException.OMDBExceptionType.CONNECTION_ERROR, null, ex);
+            throw new OMDBException(OMDBExceptionType.CONNECTION_ERROR, null, ex);
         } catch (RuntimeException ex) {
-            throw new OMDBException(OMDBException.OMDBExceptionType.HTTP_503_ERROR, "Service Unavailable", ex);
+            throw new OMDBException(OMDBExceptionType.HTTP_503_ERROR, "Service Unavailable", ex);
         }
 
         return webpage;
@@ -162,7 +164,7 @@ public class OmdbApi {
      *
      * @param title
      */
-    public String search(String title) throws OMDBException {
+    public WrapperSearch search(String title) throws OMDBException {
         return search(title, DEFAULT_YEAR);
     }
 
@@ -171,10 +173,21 @@ public class OmdbApi {
      *
      * @param title
      */
-    public String search(String title, int year) throws OMDBException {
+    public WrapperSearch search(String title, int year) throws OMDBException {
+        WrapperSearch resultList;
         URL url = new OmdbUrlBuilder().setSearch(title).setYear(year).createUrl();
 
-        return url.toString();
+        // Get the JSON
+        String jsonData = requestWebPage(url);
+
+        // Process the JSON into an object
+        try {
+            resultList = mapper.readValue(jsonData, WrapperSearch.class);
+        } catch (IOException ex) {
+            throw new OMDBException(OMDBExceptionType.MAPPING_FAILED, jsonData, ex);
+        }
+
+        return resultList;
     }
 
     /**
@@ -198,7 +211,7 @@ public class OmdbApi {
      * @throws OMDBException
      */
     public OmdbVideoFull movieInfo(String query, int year, PlotType plotType, boolean tomatoes) throws OMDBException {
-        OmdbVideoFull video;
+        OmdbVideoFull result;
         URL url;
         OmdbUrlBuilder base = new OmdbUrlBuilder();
 
@@ -215,22 +228,21 @@ public class OmdbApi {
         // Get the URL
         url = base.createUrl();
 
-        String jsonData;
-
         // Get the JSON
-        jsonData = requestWebPage(url);
-
-        LOG.info("JSON: {}", jsonData); // XXX DEBUG
+        String jsonData = requestWebPage(url);
 
         // Process the JSON into an object
         try {
-            video = mapper.readValue(jsonData, OmdbVideoFull.class);
-            LOG.info("Video: {}", video.toString());
+            result = mapper.readValue(jsonData, OmdbVideoFull.class);
 
+            if (result == null || !result.isResponse()) {
+                LOG.debug("No data returned");
+                throw new OMDBException(OMDBExceptionType.MOVIE_NOT_FOUND, (result == null ? "No data returned" : result.getError()));
+            }
         } catch (IOException ex) {
-            throw new OMDBException(OMDBException.OMDBExceptionType.MAPPING_FAILED, jsonData, ex);
+            throw new OMDBException(OMDBExceptionType.MAPPING_FAILED, jsonData, ex);
         }
 
-        return video;
+        return result;
     }
 }

@@ -21,6 +21,7 @@ package com.omertron.omdbapi;
 
 import com.omertron.omdbapi.emumerations.PlotType;
 import com.omertron.omdbapi.model.OmdbVideoFull;
+import com.omertron.omdbapi.wrapper.WrapperSearch;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -111,15 +112,14 @@ public class OmdbApiTest {
     /**
      * Test of search method, of class OmdbApi.
      */
-//    @Test
+    @Test
     public void testSearch_String() throws Exception {
         LOG.info("search");
-        String title = "";
-        String expResult = "";
-        String result = omdb.search(title);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        String title = "Star Wars";
+        WrapperSearch result = omdb.search(title);
+        assertNotNull("Null search returned", result);
+        assertTrue("Error response", result.isResponse());
+        assertTrue("No records found", result.getResults().size() > 0);
     }
 
     /**
@@ -129,10 +129,12 @@ public class OmdbApiTest {
     public void testSearch_String_int() throws Exception {
         LOG.info("search");
         String title = "Star Wars";
-        int year = 0;
-        String expResult = "";
-        String result = omdb.search(title, year);
-        assertEquals(expResult, result);
+        int year = 1977;
+        WrapperSearch result = omdb.search(title, year);
+        assertNotNull("Null search returned", result);
+        assertTrue("Error response", result.isResponse());
+        assertTrue("No records found", result.getResults().size() > 0);
+
     }
 
     /**
@@ -170,8 +172,11 @@ public class OmdbApiTest {
         assertEquals("Wrong video returned", "tt0083658", result.getImdbID());
         assertTrue("No RT data", StringUtils.isNotBlank(result.getTomatoConsensus()));
 
-        result = omdb.movieInfo("Some movie that can't be found at all", 0, PlotType.SHORT, false);
-        assertNotNull("Null object returned", result);
-        assertFalse("What do you mean this was found?", result.isResponse());
+        try {
+            result = omdb.movieInfo("Some movie that can't be found at all", 0, PlotType.SHORT, false);
+            assertFalse("What do you mean this was found?", result.isResponse());
+        } catch (OMDBException ex) {
+            assertNotNull("Null object returned", result);
+        }
     }
 }

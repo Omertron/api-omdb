@@ -39,7 +39,7 @@ public class OMDBException extends Exception {
         /*
          * The movie id was not found
          */
-        MOVIE_ID_NOT_FOUND,
+        MOVIE_NOT_FOUND,
         /*
          * Mapping failed from target to internal onbjects
          */

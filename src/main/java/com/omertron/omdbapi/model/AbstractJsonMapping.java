@@ -33,7 +33,6 @@ import java.io.Serializable;
  */
 public abstract class AbstractJsonMapping implements Serializable {
 
-    @JsonProperty("Response")
     private boolean response = Boolean.FALSE;
     @JsonProperty("Error")
     private String error = "";
@@ -42,8 +41,13 @@ public abstract class AbstractJsonMapping implements Serializable {
         return response;
     }
 
+    @JsonProperty("Response")
     public void setResponse(String response) {
         this.response = Boolean.parseBoolean(response);
+    }
+
+    public void setResponse(boolean response) {
+        this.response = response;
     }
 
     public String getError() {
