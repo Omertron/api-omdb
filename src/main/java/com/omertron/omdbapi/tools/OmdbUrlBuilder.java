@@ -123,6 +123,7 @@ public class OmdbUrlBuilder {
      * Create the String representation of the URL
      *
      * @return
+     * @throws OMDBException
      */
     public String create() throws OMDBException {
         StringBuilder sb = new StringBuilder(BASE_URL);

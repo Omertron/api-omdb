@@ -28,9 +28,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
-/**
- * @author Holger Brandl
- */
 public abstract class AbstractJsonMapping implements Serializable {
 
     private boolean response = Boolean.FALSE;

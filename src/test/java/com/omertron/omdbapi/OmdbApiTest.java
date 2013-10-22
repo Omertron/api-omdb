@@ -111,9 +111,11 @@ public class OmdbApiTest {
 
     /**
      * Test of search method, of class OmdbApi.
+     *
+     * @throws OMDBException
      */
     @Test
-    public void testSearch_String() throws Exception {
+    public void testSearch_String() throws OMDBException {
         LOG.info("search");
         String title = "Star Wars";
         WrapperSearch result = omdb.search(title);
@@ -124,9 +126,11 @@ public class OmdbApiTest {
 
     /**
      * Test of search method, of class OmdbApi.
+     *
+     * @throws OMDBException
      */
     @Test
-    public void testSearch_String_int() throws Exception {
+    public void testSearch_String_int() throws OMDBException {
         LOG.info("search");
         String title = "Star Wars";
         int year = 1977;
@@ -139,9 +143,11 @@ public class OmdbApiTest {
 
     /**
      * Test of movieInfo method, of class OmdbApi.
+     *
+     * @throws OMDBException
      */
     @Test
-    public void testMovieInfo_ByName() throws Exception {
+    public void testMovieInfo_ByName() throws OMDBException {
         LOG.info("movieInfo_ByName");
         String query = "Blade Runner";
         OmdbVideoFull result = omdb.movieInfo(query);
@@ -150,9 +156,11 @@ public class OmdbApiTest {
 
     /**
      * Test of movieInfo method, of class OmdbApi.
+     *
+     * @throws OMDBException
      */
     @Test
-    public void testMovieInfo_ByTT() throws Exception {
+    public void testMovieInfo_ByTT() throws OMDBException {
         LOG.info("movieInfo_ByTT");
         String query = "tt0083658";
         OmdbVideoFull result = omdb.movieInfo(query);
@@ -161,9 +169,11 @@ public class OmdbApiTest {
 
     /**
      * Test of movieInfo method, of class OmdbApi.
+     *
+     * @throws OMDBException
      */
     @Test
-    public void testMovieInfo_4args() throws Exception {
+    public void testMovieInfo_4args() throws OMDBException {
         LOG.info("movieInfo");
 
         OmdbVideoFull result = omdb.movieInfo("Blade Runner", 1982, PlotType.LONG, true);

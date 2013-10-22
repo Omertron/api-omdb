@@ -46,7 +46,7 @@ public class OmdbApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(OmdbApi.class);
     private static final int DEFAULT_YEAR = 0;
-    private CommonHttpClient httpClient;
+    private final CommonHttpClient httpClient;
     private boolean tomatoes = Boolean.FALSE;
     private PlotType plotLength = PlotType.getDefault();
     private String callback = "";
@@ -105,8 +105,6 @@ public class OmdbApi {
 
     /**
      * Return the long plot automatically
-     *
-     * @param defaultLongPlot
      */
     public void setLongPlot() {
         this.plotLength = PlotType.LONG;
@@ -114,8 +112,6 @@ public class OmdbApi {
 
     /**
      * Return the short plot automatically
-     *
-     * @param defaultLongPlot
      */
     public void setShortPlot() {
         this.plotLength = PlotType.SHORT;
@@ -133,7 +129,7 @@ public class OmdbApi {
     /**
      * Set the callback parameter to be added to each request
      *
-     * @param callbackParameter
+     * @param callback
      */
     public void setCallback(String callback) {
         this.callback = callback;
@@ -163,6 +159,8 @@ public class OmdbApi {
      * Get a list of movies using the movie title.
      *
      * @param title
+     * @return
+     * @throws OMDBException
      */
     public WrapperSearch search(String title) throws OMDBException {
         return search(title, DEFAULT_YEAR);
@@ -172,6 +170,9 @@ public class OmdbApi {
      * Get a list of movies using the movie title and year.
      *
      * @param title
+     * @param year
+     * @return
+     * @throws OMDBException
      */
     public WrapperSearch search(String title, int year) throws OMDBException {
         WrapperSearch resultList;
@@ -195,9 +196,22 @@ public class OmdbApi {
      *
      * @param query
      * @return
+     * @throws OMDBException
      */
     public OmdbVideoFull movieInfo(String query) throws OMDBException {
         return movieInfo(query, DEFAULT_YEAR, plotLength, tomatoes);
+    }
+
+    /**
+     * Get movie information using only the title or IMDB ID
+     *
+     * @param query
+     * @param year
+     * @return
+     * @throws OMDBException
+     */
+    public OmdbVideoFull movieInfo(String query, int year) throws OMDBException {
+        return movieInfo(query, year, plotLength, tomatoes);
     }
 
     /**
