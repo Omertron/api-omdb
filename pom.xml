@@ -42,7 +42,7 @@
         </license>
     </licenses>
 
-        <scm>
+    <scm>
         <url>scm:git:git@github.com:Omertron/api-omdb.git</url>
         <connection>scm:git:git@github.com:Omertron/api-omdb.git</connection>
         <developerConnection>scm:git:git@github.com:Omertron/api-omdb.git</developerConnection>

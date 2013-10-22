@@ -53,7 +53,7 @@ public class ApiHttpClient extends DefaultPoolingHttpClient {
 
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode != 200) {
-            throw new RuntimeException("Unexpected status " + statusCode + " for uri " + httpGet.getURI());
+            throw new IOException("Unexpected status " + statusCode + " for uri " + httpGet.getURI());
         }
 
         if (charset == null) {
