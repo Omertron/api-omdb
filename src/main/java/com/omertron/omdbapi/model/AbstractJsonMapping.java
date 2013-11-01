@@ -30,6 +30,7 @@ import java.io.Serializable;
 
 public abstract class AbstractJsonMapping implements Serializable {
 
+    private Logger log = null;
     private boolean response = Boolean.FALSE;
     @JsonProperty("Error")
     private String error = "";
@@ -55,8 +56,16 @@ public abstract class AbstractJsonMapping implements Serializable {
         this.error = error;
     }
 
-    private static Logger getLogger(Class<?> aClass) {
-        return LoggerFactory.getLogger(aClass);
+    /**
+     * Return the current logger.
+     *
+     * @return
+     */
+    private Logger getLogger() {
+        if (log == null) {
+            log = LoggerFactory.getLogger(this.getClass());
+        }
+        return log;
     }
 
     /**
@@ -66,12 +75,12 @@ public abstract class AbstractJsonMapping implements Serializable {
      * @param value
      */
     @JsonAnySetter
-    public void handleUnknown(String key, Object value) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Unknown property: '").append(key);
-        sb.append("' value: '").append(value).append("'");
+    protected void handleUnknown(String key, Object value) {
+        StringBuilder unknown = new StringBuilder(this.getClass().getSimpleName());
+        unknown.append(": Unknown property='").append(key);
+        unknown.append("' value='").append(value).append("'");
 
-        getLogger(this.getClass()).trace(sb.toString());
+        getLogger().trace(unknown.toString());
     }
 
     @Override
