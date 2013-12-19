@@ -20,6 +20,7 @@
 package com.omertron.omdbapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.omertron.omdbapi.OMDBException.OMDBExceptionType;
 import com.omertron.omdbapi.emumerations.PlotType;
 import com.omertron.omdbapi.model.OmdbVideoFull;
 import com.omertron.omdbapi.tools.ApiHttpClient;
@@ -28,12 +29,12 @@ import com.omertron.omdbapi.wrapper.WrapperSearch;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yamj.api.common.http.CommonHttpClient;
-import static com.omertron.omdbapi.OMDBException.*;
 
 /**
  * The main class for the OMDB API
@@ -45,6 +46,7 @@ import static com.omertron.omdbapi.OMDBException.*;
 public class OmdbApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(OmdbApi.class);
+    private static final String DEFAULT_CHARSET = "UTF-8";
     private static final int DEFAULT_YEAR = 0;
     private final CommonHttpClient httpClient;
     private boolean tomatoes = Boolean.FALSE;
@@ -143,7 +145,7 @@ public class OmdbApi {
         try {
             HttpGet httpGet = new HttpGet(url.toURI());
             httpGet.addHeader("accept", "application/json");
-            webpage = httpClient.requestContent(httpGet);
+            webpage = httpClient.requestContent(httpGet, Charset.forName(DEFAULT_CHARSET));
         } catch (URISyntaxException ex) {
             throw new OMDBException(OMDBExceptionType.CONNECTION_ERROR, null, ex);
         } catch (IOException ex) {
