@@ -252,7 +252,6 @@ public class OmdbApi {
             result = mapper.readValue(jsonData, OmdbVideoFull.class);
 
             if (result == null || !result.isResponse()) {
-                LOG.debug("No data returned");
                 throw new OMDBException(OMDBExceptionType.MOVIE_NOT_FOUND, (result == null ? "No data returned" : result.getError()));
             }
         } catch (IOException ex) {
