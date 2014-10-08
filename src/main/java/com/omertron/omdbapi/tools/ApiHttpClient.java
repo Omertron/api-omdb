@@ -30,6 +30,7 @@ import org.yamj.api.common.http.DefaultPoolingHttpClient;
 public class ApiHttpClient extends DefaultPoolingHttpClient {
 
     private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
+    private static final int STATUS_OK = 200;
 
     public ApiHttpClient() {
         this(null, null);
@@ -52,7 +53,7 @@ public class ApiHttpClient extends DefaultPoolingHttpClient {
         HttpResponse response = execute(httpGet);
 
         int statusCode = response.getStatusLine().getStatusCode();
-        if (statusCode != 200) {
+        if (statusCode != STATUS_OK) {
             throw new IOException("Unexpected status " + statusCode + " for uri " + httpGet.getURI());
         }
 

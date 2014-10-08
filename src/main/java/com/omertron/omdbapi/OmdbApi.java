@@ -217,7 +217,8 @@ public class OmdbApi {
     }
 
     /**
-     * Get movie information using the title or IMDB ID and with specific plot length & RT data
+     * Get movie information using the title or IMDB ID and with specific plot
+     * length & RT data
      *
      * @param query
      * @param year
@@ -252,7 +253,7 @@ public class OmdbApi {
             result = mapper.readValue(jsonData, OmdbVideoFull.class);
 
             if (result == null || !result.isResponse()) {
-                throw new OMDBException(OMDBExceptionType.MOVIE_NOT_FOUND, (result == null ? "No data returned" : result.getError()));
+                throw new OMDBException(OMDBExceptionType.MOVIE_NOT_FOUND, result == null ? "No data returned" : result.getError());
             }
         } catch (IOException ex) {
             throw new OMDBException(OMDBExceptionType.MAPPING_FAILED, jsonData, ex);
@@ -261,3 +262,4 @@ public class OmdbApi {
         return result;
     }
 }
+    
