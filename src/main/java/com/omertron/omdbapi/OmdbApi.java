@@ -35,6 +35,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yamj.api.common.http.CommonHttpClient;
+import org.yamj.api.common.http.DigestedResponse;
 
 /**
  * The main class for the OMDB API
@@ -139,22 +140,24 @@ public class OmdbApi {
     //</editor-fold>
 
     private String requestWebPage(URL url) throws OMDBException {
-        String webpage;
-
         LOG.trace("Requesting: {}", url.toString());
         try {
             HttpGet httpGet = new HttpGet(url.toURI());
             httpGet.addHeader("accept", "application/json");
-            webpage = httpClient.requestContent(httpGet, Charset.forName(DEFAULT_CHARSET));
+            DigestedResponse response = httpClient.requestContent(httpGet, Charset.forName(DEFAULT_CHARSET));
+
+            if (response.getStatusCode() >= 500) {
+                throw new OMDBException(OMDBExceptionType.HTTP_503_ERROR, "Service Unavailable");
+            } else if (response.getStatusCode() >= 300) {
+                throw new OMDBException(OMDBExceptionType.HTTP_404_ERROR, "Page Unavailable");
+            }
+
+            return response.getContent();
         } catch (URISyntaxException ex) {
             throw new OMDBException(OMDBExceptionType.CONNECTION_ERROR, null, ex);
         } catch (IOException ex) {
             throw new OMDBException(OMDBExceptionType.CONNECTION_ERROR, null, ex);
-        } catch (RuntimeException ex) {
-            throw new OMDBException(OMDBExceptionType.HTTP_503_ERROR, "Service Unavailable", ex);
         }
-
-        return webpage;
     }
 
     /**
@@ -217,8 +220,7 @@ public class OmdbApi {
     }
 
     /**
-     * Get movie information using the title or IMDB ID and with specific plot
-     * length & RT data
+     * Get movie information using the title or IMDB ID and with specific plot length & RT data
      *
      * @param query
      * @param year
@@ -262,4 +264,3 @@ public class OmdbApi {
         return result;
     }
 }
-    

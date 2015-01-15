@@ -26,6 +26,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.params.HttpParams;
 import org.yamj.api.common.http.DefaultPoolingHttpClient;
+import org.yamj.api.common.http.DigestedResponse;
 
 public class ApiHttpClient extends DefaultPoolingHttpClient {
 
@@ -48,8 +49,16 @@ public class ApiHttpClient extends DefaultPoolingHttpClient {
         super(connectionManager, httpParams);
     }
 
+    /**
+     * Get the content
+     *
+     * @param httpGet
+     * @param charset
+     * @return
+     * @throws IOException
+     */
     @Override
-    public String requestContent(HttpGet httpGet, Charset charset) throws IOException {
+    public DigestedResponse requestContent(HttpGet httpGet, Charset charset) throws IOException {
         HttpResponse response = execute(httpGet);
 
         int statusCode = response.getStatusLine().getStatusCode();
