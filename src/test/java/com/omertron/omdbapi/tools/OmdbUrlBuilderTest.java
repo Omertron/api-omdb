@@ -28,6 +28,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yamj.api.common.http.CommonHttpClient;
+import org.yamj.api.common.http.DefaultPoolingHttpClient;
 import org.yamj.api.common.http.DigestedResponse;
 
 /**
@@ -68,7 +70,7 @@ public class OmdbUrlBuilderTest {
 
         assertEquals("Failed text search", expResult, result);
 
-        ApiHttpClient x = new ApiHttpClient();
+        CommonHttpClient x = new DefaultPoolingHttpClient();
         DigestedResponse webpage = x.requestContent(result);
         LOG.info(webpage.getContent());
     }

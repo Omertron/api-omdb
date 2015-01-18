@@ -27,6 +27,7 @@ import java.net.URL;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yamj.api.common.exception.ApiExceptionType;
 
 public class OmdbUrlBuilder {
 
@@ -136,7 +137,7 @@ public class OmdbUrlBuilder {
         } else if (StringUtils.isNotBlank(title)) {
             sb.append(PARAM_TITLE).append(title.replace(" ", "+"));
         } else {
-            throw new OMDBException(OMDBException.OMDBExceptionType.INVALID_URL, "Must include a search or ID");
+            throw new OMDBException(ApiExceptionType.INVALID_URL, "Must include a search or ID");
         }
 
         if (year > DEFAULT_YEAR) {
@@ -188,7 +189,7 @@ public class OmdbUrlBuilder {
         try {
             omdbUrl = new URL(url);
         } catch (MalformedURLException ex) {
-            throw new OMDBException(OMDBException.OMDBExceptionType.INVALID_URL, "Failed to create URL from '" + url + "'", ex);
+            throw new OMDBException(ApiExceptionType.INVALID_URL, "Failed to create URL", url, ex);
         }
         return omdbUrl;
     }

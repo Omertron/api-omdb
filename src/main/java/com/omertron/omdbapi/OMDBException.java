@@ -19,69 +19,45 @@
  */
 package com.omertron.omdbapi;
 
-public class OMDBException extends Exception {
+import java.net.URL;
+import org.yamj.api.common.exception.ApiException;
+import org.yamj.api.common.exception.ApiExceptionType;
 
-    private static final long serialVersionUID = 1L;
+public class OMDBException extends ApiException {
 
-    public enum OMDBExceptionType {
-        /*
-         * Unknown error occured
-         */
-        UNKNOWN_CAUSE,
-        /*
-         * URL is invalid
-         */
-        INVALID_URL,
-        /*
-         * Page not found
-         */
-        HTTP_404_ERROR,
-        /*
-         * The movie id was not found
-         */
-        MOVIE_NOT_FOUND,
-        /*
-         * Mapping failed from target to internal onbjects
-         */
-        MAPPING_FAILED,
-        /*
-         * Error connecting to the service
-         */
-        CONNECTION_ERROR,
-        /*
-         * Image was invalid
-         */
-        INVALID_IMAGE,
-        /*
-         * Autorisation rejected
-         */
-        AUTHORISATION_FAILURE,
-        /*
-         * Service Unavailable, usually temporary
-         */
-        HTTP_503_ERROR;
+    public OMDBException(ApiExceptionType exceptionType, String response) {
+        super(exceptionType, response);
     }
 
-    private final OMDBExceptionType exceptionType;
-    private final String response;
-
-    public OMDBException(final OMDBExceptionType exceptionType, final String response) {
-        super();
-        this.exceptionType = exceptionType;
-        this.response = response;
+    public OMDBException(ApiExceptionType exceptionType, String response, URL url) {
+        super(exceptionType, response, url);
     }
 
-    public OMDBException(final OMDBExceptionType exceptionType, final String response, final Throwable cause) {
-        super(cause);
-        this.exceptionType = exceptionType;
-        this.response = response;
+    public OMDBException(ApiExceptionType exceptionType, String response, int responseCode, URL url) {
+        super(exceptionType, response, responseCode, url);
     }
 
-    public OMDBExceptionType getExceptionType() {
-        return exceptionType;
+    public OMDBException(ApiExceptionType exceptionType, String response, String url) {
+        super(exceptionType, response, url);
     }
 
-    public String getResponse() {
-        return response;
+    public OMDBException(ApiExceptionType exceptionType, String response, int responseCode, String url) {
+        super(exceptionType, response, responseCode, url);
+    }
+
+    public OMDBException(ApiExceptionType exceptionType, String response, URL url, Throwable cause) {
+        super(exceptionType, response, url, cause);
+    }
+
+    public OMDBException(ApiExceptionType exceptionType, String response, int responseCode, URL url, Throwable cause) {
+        super(exceptionType, response, responseCode, url, cause);
+    }
+
+    public OMDBException(ApiExceptionType exceptionType, String response, String url, Throwable cause) {
+        super(exceptionType, response, url, cause);
+    }
+
+    public OMDBException(ApiExceptionType exceptionType, String response, int responseCode, String url, Throwable cause) {
+        super(exceptionType, response, responseCode, url, cause);
     }
 }

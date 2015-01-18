@@ -20,10 +20,8 @@
 package com.omertron.omdbapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.omertron.omdbapi.OMDBException.OMDBExceptionType;
 import com.omertron.omdbapi.emumerations.PlotType;
 import com.omertron.omdbapi.model.OmdbVideoFull;
-import com.omertron.omdbapi.tools.ApiHttpClient;
 import com.omertron.omdbapi.tools.OmdbUrlBuilder;
 import com.omertron.omdbapi.wrapper.WrapperSearch;
 import java.io.IOException;
@@ -34,7 +32,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yamj.api.common.exception.ApiExceptionType;
 import org.yamj.api.common.http.CommonHttpClient;
+import org.yamj.api.common.http.DefaultPoolingHttpClient;
 import org.yamj.api.common.http.DigestedResponse;
 
 /**
@@ -55,13 +55,16 @@ public class OmdbApi {
     private String callback = "";
     // Jackson JSON configuration
     private static ObjectMapper mapper = new ObjectMapper();
+    // HTTP Status codes
+    private static final int HTTP_STATUS_300 = 300;
+    private static final int HTTP_STATUS_500 = 500;
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
      * Create an instance of the API with the default HTTP Client
      */
     public OmdbApi() {
-        this.httpClient = new ApiHttpClient();
+        this.httpClient = new DefaultPoolingHttpClient();
     }
 
     /**
@@ -146,17 +149,17 @@ public class OmdbApi {
             httpGet.addHeader("accept", "application/json");
             DigestedResponse response = httpClient.requestContent(httpGet, Charset.forName(DEFAULT_CHARSET));
 
-            if (response.getStatusCode() >= 500) {
-                throw new OMDBException(OMDBExceptionType.HTTP_503_ERROR, "Service Unavailable");
-            } else if (response.getStatusCode() >= 300) {
-                throw new OMDBException(OMDBExceptionType.HTTP_404_ERROR, "Page Unavailable");
+            if (response.getStatusCode() >= HTTP_STATUS_500) {
+                throw new OMDBException(ApiExceptionType.HTTP_503_ERROR, "Service Unavailable");
+            } else if (response.getStatusCode() >= HTTP_STATUS_300) {
+                throw new OMDBException(ApiExceptionType.HTTP_404_ERROR, "Page Unavailable");
             }
 
             return response.getContent();
         } catch (URISyntaxException ex) {
-            throw new OMDBException(OMDBExceptionType.CONNECTION_ERROR, null, ex);
+            throw new OMDBException(ApiExceptionType.CONNECTION_ERROR, "", url, ex);
         } catch (IOException ex) {
-            throw new OMDBException(OMDBExceptionType.CONNECTION_ERROR, null, ex);
+            throw new OMDBException(ApiExceptionType.CONNECTION_ERROR, "", url, ex);
         }
     }
 
@@ -190,7 +193,7 @@ public class OmdbApi {
         try {
             resultList = mapper.readValue(jsonData, WrapperSearch.class);
         } catch (IOException ex) {
-            throw new OMDBException(OMDBExceptionType.MAPPING_FAILED, jsonData, ex);
+            throw new OMDBException(ApiExceptionType.MAPPING_FAILED, jsonData, 0, url, ex);
         }
 
         return resultList;
@@ -255,10 +258,10 @@ public class OmdbApi {
             result = mapper.readValue(jsonData, OmdbVideoFull.class);
 
             if (result == null || !result.isResponse()) {
-                throw new OMDBException(OMDBExceptionType.MOVIE_NOT_FOUND, result == null ? "No data returned" : result.getError());
+                throw new OMDBException(ApiExceptionType.ID_NOT_FOUND, result == null ? "No data returned" : result.getError());
             }
         } catch (IOException ex) {
-            throw new OMDBException(OMDBExceptionType.MAPPING_FAILED, jsonData, ex);
+            throw new OMDBException(ApiExceptionType.MAPPING_FAILED, jsonData, 0, url, ex);
         }
 
         return result;
