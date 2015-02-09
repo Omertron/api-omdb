@@ -30,12 +30,15 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yamj.api.common.exception.ApiExceptionType;
-import org.yamj.api.common.http.CommonHttpClient;
-import org.yamj.api.common.http.DefaultPoolingHttpClient;
 import org.yamj.api.common.http.DigestedResponse;
+import org.yamj.api.common.http.DigestedResponseReader;
+import org.yamj.api.common.http.SimpleHttpClientBuilder;
+import org.yamj.api.common.http.UserAgentSelector;
 
 /**
  * The main class for the OMDB API
@@ -47,9 +50,8 @@ import org.yamj.api.common.http.DigestedResponse;
 public class OmdbApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(OmdbApi.class);
-    private static final String DEFAULT_CHARSET = "UTF-8";
     private static final int DEFAULT_YEAR = 0;
-    private final CommonHttpClient httpClient;
+    private final CloseableHttpClient httpClient;
     private boolean tomatoes = Boolean.FALSE;
     private PlotType plotLength = PlotType.getDefault();
     private String callback = "";
@@ -58,13 +60,15 @@ public class OmdbApi {
     // HTTP Status codes
     private static final int HTTP_STATUS_300 = 300;
     private static final int HTTP_STATUS_500 = 500;
+    private static final String DEFAULT_CHARSET = "UTF-8";
+    private final Charset charset;
 
     //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
      * Create an instance of the API with the default HTTP Client
      */
     public OmdbApi() {
-        this.httpClient = new DefaultPoolingHttpClient();
+        this(new SimpleHttpClientBuilder().build());
     }
 
     /**
@@ -72,8 +76,9 @@ public class OmdbApi {
      *
      * @param httpClient
      */
-    public OmdbApi(CommonHttpClient httpClient) {
+    public OmdbApi(CloseableHttpClient httpClient) {
         this.httpClient = httpClient;
+        this.charset = Charset.forName(DEFAULT_CHARSET);
     }
     //</editor-fold>
 
@@ -145,21 +150,23 @@ public class OmdbApi {
     private String requestWebPage(URL url) throws OMDBException {
         LOG.trace("Requesting: {}", url.toString());
         try {
-            HttpGet httpGet = new HttpGet(url.toURI());
+            final HttpGet httpGet = new HttpGet(url.toURI());
             httpGet.addHeader("accept", "application/json");
-            DigestedResponse response = httpClient.requestContent(httpGet, Charset.forName(DEFAULT_CHARSET));
+            httpGet.addHeader(HTTP.USER_AGENT, UserAgentSelector.randomUserAgent());
+
+            final DigestedResponse response = DigestedResponseReader.requestContent(httpClient, httpGet, charset);
 
             if (response.getStatusCode() >= HTTP_STATUS_500) {
-                throw new OMDBException(ApiExceptionType.HTTP_503_ERROR, "Service Unavailable");
+                throw new OMDBException(ApiExceptionType.HTTP_503_ERROR, response.getContent(), response.getStatusCode(), url);
             } else if (response.getStatusCode() >= HTTP_STATUS_300) {
-                throw new OMDBException(ApiExceptionType.HTTP_404_ERROR, "Page Unavailable");
+                throw new OMDBException(ApiExceptionType.HTTP_404_ERROR, response.getContent(), response.getStatusCode(), url);
             }
 
             return response.getContent();
         } catch (URISyntaxException ex) {
-            throw new OMDBException(ApiExceptionType.CONNECTION_ERROR, "", url, ex);
+          throw new OMDBException(ApiExceptionType.INVALID_URL, "Invalid URL", url, ex);
         } catch (IOException ex) {
-            throw new OMDBException(ApiExceptionType.CONNECTION_ERROR, "", url, ex);
+            throw new OMDBException(ApiExceptionType.CONNECTION_ERROR, "Error retrieving URL", url, ex);
         }
     }
 
@@ -223,7 +230,8 @@ public class OmdbApi {
     }
 
     /**
-     * Get movie information using the title or IMDB ID and with specific plot length & RT data
+     * Get movie information using the title or IMDB ID and with specific plot
+     * length & RT data
      *
      * @param query
      * @param year

@@ -48,7 +48,6 @@ public class TestLogger {
         // Only works with Java 7 or later
         config.append("java.util.logging.SimpleFormatter.format = [%1$tH:%1$tM:%1$tS %4$6s] %2$s - %5$s %6$s%n").append(CRLF);
         // Exclude logging messages
-        // Note: This does not work for apache
         config.append("org.apache.http.level = SEVERE").append(CRLF);
 
         InputStream ins = new ByteArrayInputStream(config.toString().getBytes());

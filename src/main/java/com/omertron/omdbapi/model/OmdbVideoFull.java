@@ -20,6 +20,10 @@
 package com.omertron.omdbapi.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class OmdbVideoFull extends OmdbVideoBasic {
 
@@ -74,6 +78,12 @@ public class OmdbVideoFull extends OmdbVideoBasic {
     private String tomatoProduction = "";
     @JsonProperty("Website")
     private String tomatoWebsite = "";
+    private List<String> languages = Collections.emptyList();
+    private List<String> countries = Collections.emptyList();
+    @JsonProperty("Awards")
+    private String Awards = "";
+    @JsonProperty("Metascore")
+    private int metascore = 0;
 
     //<editor-fold defaultstate="collapsed" desc="Getter Methods">
     public String getRated() {
@@ -174,6 +184,22 @@ public class OmdbVideoFull extends OmdbVideoBasic {
 
     public String getTomatoWebsite() {
         return tomatoWebsite;
+    }
+
+    public List<String> getLanguages() {
+        return languages;
+    }
+
+    public List<String> getCountries() {
+        return countries;
+    }
+
+    public String getAwards() {
+        return Awards;
+    }
+
+    public int getMetascore() {
+        return metascore;
     }
     //</editor-fold>
 
@@ -277,5 +303,31 @@ public class OmdbVideoFull extends OmdbVideoBasic {
     public void setTomatoWebsite(String tomatoWebsite) {
         this.tomatoWebsite = tomatoWebsite;
     }
+
+    public void setLanguages(List<String> languages) {
+        this.languages = languages;
+    }
+
+    public void setCountries(List<String> countries) {
+        this.countries = countries;
+    }
+
+    public void setAwards(String Awards) {
+        this.Awards = Awards;
+    }
+
+    public void setMetascore(int metascore) {
+        this.metascore = metascore;
+    }
     //</editor-fold>
+
+    @JsonSetter("Language")
+    public void setLanguageList(String languages) {
+        this.languages = Arrays.asList(languages.split(","));
+    }
+
+    @JsonSetter("Country")
+    public void setCountryList(String countries) {
+        this.countries = Arrays.asList(countries.split(","));
+    }
 }

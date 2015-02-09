@@ -20,15 +20,19 @@
 package com.omertron.omdbapi;
 
 import com.omertron.omdbapi.emumerations.PlotType;
+import com.omertron.omdbapi.model.OmdbVideoBasic;
 import com.omertron.omdbapi.model.OmdbVideoFull;
 import com.omertron.omdbapi.wrapper.WrapperSearch;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,12 +120,21 @@ public class OmdbApiTest {
      */
     @Test
     public void testSearch_String() throws OMDBException {
-        LOG.info("search");
+        LOG.info("Search - Title");
         String title = "Star Wars";
         WrapperSearch result = omdb.search(title);
         assertNotNull("Null search returned", result);
         assertTrue("Error response", result.isResponse());
         assertTrue("No records found", result.getResults().size() > 0);
+
+        boolean found = false;
+        for (OmdbVideoBasic movie : result.getResults()) {
+            if (StringUtils.equals("tt0076759", movie.getImdbID())) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("Movie not found in search results", found);
     }
 
     /**
@@ -131,7 +144,7 @@ public class OmdbApiTest {
      */
     @Test
     public void testSearch_String_int() throws OMDBException {
-        LOG.info("search");
+        LOG.info("Search - Title & Year");
         String title = "Star Wars";
         int year = 1977;
         WrapperSearch result = omdb.search(title, year);
@@ -139,6 +152,14 @@ public class OmdbApiTest {
         assertTrue("Error response", result.isResponse());
         assertTrue("No records found", result.getResults().size() > 0);
 
+        boolean found = false;
+        for (OmdbVideoBasic movie : result.getResults()) {
+            if (StringUtils.equals("tt0076759", movie.getImdbID())) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("Movie not found in search results", found);
     }
 
     /**
@@ -174,7 +195,7 @@ public class OmdbApiTest {
      */
     @Test
     public void testMovieInfo_4args() throws OMDBException {
-        LOG.info("movieInfo");
+        LOG.info("movieInfo - All args");
 
         OmdbVideoFull result = omdb.movieInfo("Blade Runner", 1982, PlotType.LONG, true);
         assertNotNull("Null object returned", result);
