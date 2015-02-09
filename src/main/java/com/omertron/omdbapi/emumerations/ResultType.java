@@ -19,34 +19,42 @@
  */
 package com.omertron.omdbapi.emumerations;
 
-public enum PlotType {
+public enum ResultType {
 
     /**
-     * The short version of the plot
+     * Movie results
      */
-    SHORT,
+    MOVIE,
     /**
-     * The longer version of the plot
+     * Series results
      */
-    LONG;
-    private static final PlotType DEFAULT = PlotType.SHORT;
+    SERIES,
+    /**
+     * Episode results
+     */
+    EPISODE,
+    /**
+     * Default to all result types
+     */
+    ALL;
+    private static final ResultType DEFAULT = ResultType.ALL;
 
     /**
-     * Is the supplied PlotType the default
+     * Is the supplied ResultType the default
      *
-     * @param plotType
+     * @param resultType
      * @return
      */
-    public static boolean isDefault(PlotType plotType) {
-        return plotType.equals(DEFAULT);
+    public static boolean isDefault(ResultType resultType) {
+        return resultType.equals(DEFAULT);
     }
 
     /**
-     * Get the default plot type
+     * Get the default ResultType
      *
      * @return
      */
-    public static PlotType getDefault() {
+    public static ResultType getDefault() {
         return DEFAULT;
     }
 }

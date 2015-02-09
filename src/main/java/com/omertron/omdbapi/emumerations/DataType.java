@@ -19,34 +19,34 @@
  */
 package com.omertron.omdbapi.emumerations;
 
-public enum ResponseType {
-    /*
-     * Get the response as JSON format
-     */
-
-    JSON,
-    /*
-     * Get the response as XML format
-     */
-    XML;
-    private static final ResponseType DEFAULT = ResponseType.JSON;
+public enum DataType {
 
     /**
-     * Is the supplied ResponseType the default
+     * Get the data as JSON format
+     */
+    JSON,
+    /**
+     * Get the data as XML format
+     */
+    XML;
+    private static final DataType DEFAULT = DataType.JSON;
+
+    /**
+     * Is the supplied DataType the default
      *
-     * @param responseType
+     * @param dataType
      * @return
      */
-    public static boolean isDefault(ResponseType responseType) {
-        return responseType.equals(DEFAULT);
+    public static boolean isDefault(DataType dataType) {
+        return dataType.equals(DEFAULT);
     }
 
     /**
-     * Get the default ResponseType
+     * Get the default DataType
      *
      * @return
      */
-    public static ResponseType getDefault() {
+    public static DataType getDefault() {
         return DEFAULT;
     }
 }

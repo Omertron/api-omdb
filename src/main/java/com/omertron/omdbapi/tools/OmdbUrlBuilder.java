@@ -20,8 +20,9 @@
 package com.omertron.omdbapi.tools;
 
 import com.omertron.omdbapi.OMDBException;
+import com.omertron.omdbapi.emumerations.DataType;
 import com.omertron.omdbapi.emumerations.PlotType;
-import com.omertron.omdbapi.emumerations.ResponseType;
+import com.omertron.omdbapi.emumerations.ResultType;
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +41,8 @@ public class OmdbUrlBuilder {
     private static final String PARAM_IMDB = "i=";
     private static final String PARAM_TITLE = "t=";
     private static final String PARAM_YEAR = "y=";
-    private static final String PARAM_RESPONSE = "r=";
+    private static final String PARAM_DATA = "r=";
+    private static final String PARAM_RESULT = "type=";
     private static final String PARAM_PLOT = "plot=";
     private static final String PARAM_CALLBACK = "callback=";
     private static final String PARAM_TOMATOES = "tomatoes=";
@@ -55,7 +57,8 @@ public class OmdbUrlBuilder {
     private PlotType plot = PlotType.getDefault();
     private String callback = "";
     private boolean tomatoes = false;
-    private ResponseType response = ResponseType.getDefault();
+    private ResultType type = ResultType.getDefault();
+    private DataType response = DataType.getDefault();
 
     public OmdbUrlBuilder() {
     }
@@ -105,18 +108,38 @@ public class OmdbUrlBuilder {
         return this;
     }
 
-    public OmdbUrlBuilder setResponse(ResponseType response) {
+    public OmdbUrlBuilder setData(DataType response) {
         this.response = response;
         return this;
     }
 
-    public OmdbUrlBuilder setResponseJson() {
-        this.response = ResponseType.JSON;
+    public OmdbUrlBuilder setDataJson() {
+        this.response = DataType.JSON;
         return this;
     }
 
-    public OmdbUrlBuilder setResponseXml() {
-        this.response = ResponseType.XML;
+    public OmdbUrlBuilder setDataXml() {
+        this.response = DataType.XML;
+        return this;
+    }
+
+    public OmdbUrlBuilder setType(ResultType type) {
+        this.type = type;
+        return this;
+    }
+
+    public OmdbUrlBuilder setTypeMovie() {
+        this.type = ResultType.MOVIE;
+        return this;
+    }
+
+    public OmdbUrlBuilder setTypeSeries() {
+        this.type = ResultType.SERIES;
+        return this;
+    }
+
+    public OmdbUrlBuilder setTypeEpisode() {
+        this.type = ResultType.EPISODE;
         return this;
     }
 
@@ -154,16 +177,21 @@ public class OmdbUrlBuilder {
             sb.append(DELIMITER_SUBSEQUENT).append(PARAM_TOMATOES).append(tomatoes);
         }
 
+        // Append the Type
+        if (type != ResultType.getDefault()) {
+            sb.append(DELIMITER_SUBSEQUENT).append(PARAM_RESULT).append(type);
+        }
+
         // Append the JSON request
-        if (response != ResponseType.getDefault()) {
-            sb.append(DELIMITER_SUBSEQUENT).append(PARAM_RESPONSE);
+        if (response != DataType.getDefault()) {
+            sb.append(DELIMITER_SUBSEQUENT).append(PARAM_DATA);
         }
 
         if (StringUtils.isNotBlank(callback)) {
             sb.append(DELIMITER_SUBSEQUENT).append(PARAM_CALLBACK).append(callback);
         }
 
-        LOG.debug("Created URL: {}", sb.toString());
+        LOG.trace("Created URL: {}", sb.toString());
         return sb.toString();
     }
 

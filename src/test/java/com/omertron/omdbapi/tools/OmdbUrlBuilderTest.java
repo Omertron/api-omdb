@@ -19,18 +19,18 @@
  */
 package com.omertron.omdbapi.tools;
 
+import com.omertron.omdbapi.OMDBException;
 import com.omertron.omdbapi.TestLogger;
+import com.omertron.omdbapi.emumerations.ResultType;
 import org.junit.After;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yamj.api.common.http.CommonHttpClient;
-import org.yamj.api.common.http.DefaultPoolingHttpClient;
-import org.yamj.api.common.http.DigestedResponse;
+import org.yamj.api.common.exception.ApiExceptionType;
 
 /**
  *
@@ -62,21 +62,17 @@ public class OmdbUrlBuilderTest {
     }
 
     @Test
-    public void testCreateUrl1() throws Exception {
+    public void testCreateUrl1() throws OMDBException {
         LOG.info("createUrl1");
 
         String expResult = "http://www.omdbapi.com/?s=Star+Wars&y=1977";
         String result = new OmdbUrlBuilder().setSearch("Star Wars").setYear(1977).create();
 
         assertEquals("Failed text search", expResult, result);
-
-        CommonHttpClient x = new DefaultPoolingHttpClient();
-        DigestedResponse webpage = x.requestContent(result);
-        LOG.info(webpage.getContent());
     }
 
     @Test
-    public void testCreateUrl2() throws Exception {
+    public void testCreateUrl2() throws OMDBException {
         LOG.info("createUrl2");
 
         String expResult = "http://www.omdbapi.com/?t=True+Grit&y=1969";
@@ -86,12 +82,49 @@ public class OmdbUrlBuilderTest {
     }
 
     @Test
-    public void testCreateUrl3() throws Exception {
+    public void testCreateUrl3() throws OMDBException {
         LOG.info("createUrl3");
 
         String expResult = "http://www.omdbapi.com/?i=tt1285016";
         String result = new OmdbUrlBuilder().setImdb("tt1285016").create();
 
         assertEquals("Failed Search test", expResult, result);
+    }
+
+    @Test
+    public void testResultType() throws OMDBException {
+        LOG.info("Test ResultType");
+
+        final String term = "Star Wars";
+        final String base = "http://www.omdbapi.com/?s=Star+Wars";
+        String expResult, result;
+
+        for (ResultType rt : ResultType.values()) {
+            LOG.info("Testing '{}' is {}the default", rt, ResultType.isDefault(rt) ? "" : "not ");
+            if (ResultType.isDefault(rt)) {
+                expResult = base;
+            } else {
+                expResult = base + "&type=" + rt.toString();
+            }
+
+            switch (rt) {
+                case EPISODE:
+                    result = new OmdbUrlBuilder().setSearch(term).setTypeEpisode().create();
+                    break;
+                case MOVIE:
+                    result = new OmdbUrlBuilder().setSearch(term).setTypeMovie().create();
+                    break;
+                case SERIES:
+                    result = new OmdbUrlBuilder().setSearch(term).setTypeSeries().create();
+                    break;
+                case ALL:
+                    result = new OmdbUrlBuilder().setSearch(term).setType(rt).create();
+                    break;
+                default:
+                    throw new OMDBException(ApiExceptionType.UNKNOWN_CAUSE, "Unknown Result Type: " + rt.toString());
+            }
+
+            assertEquals("Failed " + rt + " search test", expResult, result);
+        }
     }
 }
