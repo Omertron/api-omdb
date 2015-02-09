@@ -82,7 +82,7 @@ public class OmdbVideoFull extends OmdbVideoBasic implements Serializable {
     private List<String> languages = Collections.emptyList();
     private List<String> countries = Collections.emptyList();
     @JsonProperty("Awards")
-    private String Awards = "";
+    private String awards = "";
     @JsonProperty("Metascore")
     private int metascore = 0;
 
@@ -196,7 +196,7 @@ public class OmdbVideoFull extends OmdbVideoBasic implements Serializable {
     }
 
     public String getAwards() {
-        return Awards;
+        return awards;
     }
 
     public int getMetascore() {
@@ -313,8 +313,8 @@ public class OmdbVideoFull extends OmdbVideoBasic implements Serializable {
         this.countries = countries;
     }
 
-    public void setAwards(String Awards) {
-        this.Awards = Awards;
+    public void setAwards(String awards) {
+        this.awards = awards;
     }
 
     public void setMetascore(int metascore) {
