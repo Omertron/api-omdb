@@ -20,8 +20,9 @@
 package com.omertron.omdbapi.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.Serializable;
 
-public class OmdbVideoBasic extends AbstractJsonMapping {
+public class OmdbVideoBasic extends AbstractJsonMapping implements Serializable {
 
     @JsonProperty("Title")
     private String title = "";

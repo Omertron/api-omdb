@@ -21,11 +21,12 @@ package com.omertron.omdbapi.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class OmdbVideoFull extends OmdbVideoBasic {
+public class OmdbVideoFull extends OmdbVideoBasic implements Serializable {
 
     @JsonProperty("Rated")
     private String rated = "";

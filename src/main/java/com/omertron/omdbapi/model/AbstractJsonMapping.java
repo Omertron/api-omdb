@@ -21,13 +21,12 @@ package com.omertron.omdbapi.model;
 
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.io.Serializable;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractJsonMapping implements Serializable {
+public abstract class AbstractJsonMapping {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractJsonMapping.class);
     private boolean response = Boolean.FALSE;

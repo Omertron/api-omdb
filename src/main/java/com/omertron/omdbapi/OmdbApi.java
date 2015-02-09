@@ -43,8 +43,6 @@ import org.yamj.api.common.http.UserAgentSelector;
 /**
  * The main class for the OMDB API
  *
- * TODO: Add proxy/timeout support for the local http client
- *
  * @author stuart.boston
  */
 public class OmdbApi {
@@ -164,7 +162,7 @@ public class OmdbApi {
 
             return response.getContent();
         } catch (URISyntaxException ex) {
-          throw new OMDBException(ApiExceptionType.INVALID_URL, "Invalid URL", url, ex);
+            throw new OMDBException(ApiExceptionType.INVALID_URL, "Invalid URL", url, ex);
         } catch (IOException ex) {
             throw new OMDBException(ApiExceptionType.CONNECTION_ERROR, "Error retrieving URL", url, ex);
         }
