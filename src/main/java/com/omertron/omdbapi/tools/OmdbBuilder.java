@@ -49,7 +49,7 @@ public final class OmdbBuilder {
     }
 
     /**
-     * Set the build term
+     * Set the search term
      *
      * @param searchTerm The text to build for
      * @return
@@ -193,7 +193,7 @@ public final class OmdbBuilder {
     }
 
     /**
-     * Include Rotten Tomatoes ratings.
+     * Include or exclude Rotten Tomatoes ratings.
      *
      * @param tomatoes
      * @return
@@ -201,6 +201,30 @@ public final class OmdbBuilder {
     public OmdbBuilder setTomatoes(boolean tomatoes) {
         if (DEFAULT_TOMATOES != tomatoes) {
             params.add(Param.TOMATOES, tomatoes);
+        }
+        return this;
+    }
+
+    /**
+     * Include Rotten Tomatoes ratings.
+     *
+     * @return
+     */
+    public OmdbBuilder setTomatoesOn() {
+        if (DEFAULT_TOMATOES != true) {
+            params.add(Param.TOMATOES, true);
+        }
+        return this;
+    }
+
+    /**
+     * Exclude Rotten Tomatoes ratings.
+     *
+     * @return
+     */
+    public OmdbBuilder setTomatoesOff() {
+        if (DEFAULT_TOMATOES != false) {
+            params.add(Param.TOMATOES, false);
         }
         return this;
     }

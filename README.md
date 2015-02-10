@@ -28,34 +28,65 @@ The API usage is very simple. Just instantiate the object:
 
     OmdbApi omdb = new OmdbApi();
 
-Then call one of the search or movie info methods to get what you are looking for.
+Then call the `search` or `getInfo` methods to get what you are looking for.
+
+This API uses a builder function to allow you to specify all the parameters that are relevant to your search.
+
 For example, searching for "Star Wars"
 
-    WrapperSearch result = omdb.search("Star Wars");
+    SearchResults results = omdb.search(new OmdbBuilder().setSearchTerm("Star Wars").build());
 
-will yield a list of all movies that match "Star Wars".
-If there are no results or an error, the `result.isResponse()` will be `false`.
+This will yield a list of all movies that match "Star Wars".
+If there are no results or an error, the `results.isResponse()` will be `false`.
 
-You can also search for a specific movie using the IMDB ID or title & year
+You can also get information for a specific movie using the IMDB ID or title & year:
 
-    OmdbVideoFull result = omdb.movieInfo("tt0083658");
-    OmdbVideoFull result = omdb.movieInfo("Blade Runner");
-    OmdbVideoFull result = omdb.movieInfo("Blade Runner", 1982);
+    OmdbVideoFull result = omdb.getInfo(new OmdbBuilder().setImdbId("tt0083658");
+    OmdbVideoFull result = omdb.getInfo(new OmdbBuilder().setTitle("Blade Runner").build());
+    OmdbVideoFull result = omdb.getInfo(new OmdbBuilder().setTitle("Blade Runner").setYear(1982).build());
 
-###Configuration
-By default the plot returned is short and Rotten Tomatoes information is omitted from the MovieInfo results.
-You can change the default settings for both of these, which will affect all the results returned, by using:
+###Builder Methods
+By default results are returned for all video types (movie, series & episode), the plot is short and Rotten Tomatoes information is omitted from the results.
 
-    omdb.setTomatoes(true);     // Add Rotten Tomatoes information
-    omdb.setTomatoes(false);    // Don't add Rotten Tomatoes information (default)
-    omdb.setLongPlot();         // Return the longer plot
-    omdb.setShortPlot();        // Return the short plot (default)
+You can change this behaviour with the OmdbBuilder call, the following methods are supported:
+####Main Parameters
+Only one of these should be chosen
 
-There is a method for movie information that allows you to specify all of these in the method call:
+    .setSearchTerm(string)  // Setting this will perform a search
+    .setTitle(string)       // Setting this will get information on the title
+    .setImdbId(string)      // Setting this will get information on the IMDB ID
+####Additional Parameters
+The following parameters will limit the searches returned:
 
-    boolean rottenTomsRequired = true;
-    OmdbVideoFull result = omdb.movieInfo("Blade Runner", 1982, PlotType.LONG, rottenTomsRequired);
+    .setYear(integer)           // The year
+    .setResultType(ResultType)  // One of ALL (default), MOVIE, SERIES or EPISODE
+    .setTypeMovie()             // A shortcut for the ResultType.MOVIE
+    .setTypeSeries()            // A shortcut for the ResultType.SERIES
+    .setTypeEpisode()           // A shortcut for the ResultType.EPISODE
+    .setPlot(PlotType)          // One of SHORT or LONG for the length of the plot
+    .setPlotLong()              // A shortcut for the PlotType.LONG
+    .setPlotShort()             // A shortcut for the PlotType.SHORT
+    .setTomatoes(boolean)       // Include or exclude Rotten Tomatoes ratings
+    .setTomatoesOn()            // Include Rotten Tomatoes ratings
+    .setTomatoesOff()           // Exclude Rotten Tomatoes ratings
 
+####Examples
+Get information on Blade Runner with long plot and Rotten Tomatoes information:
+
+    OmdbVideoFull result = omdb.getInfo(new OmdbBuilder()
+        .setTitle("Blade Runner")
+        .setYear(1982)
+        .setPlot(PlotType.LONG)
+        .setTomatoes(true)
+        .build());
+
+The following call does the same using the IMDB ID and the shortcut calls:
+
+    OmdbVideoFull result = omdb.getInfo(new OmdbBuilder()
+        .setImdbId("tt0083658")
+        .setPlotLong()
+        .setTomatoesOn()
+        .build());
 
 ***
 Project Logging
