@@ -17,14 +17,12 @@
  *      along with the OMDB API.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.omertron.omdbapi.wrapper;
+package com.omertron.omdbapi.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.omertron.omdbapi.model.AbstractJsonMapping;
-import com.omertron.omdbapi.model.OmdbVideoBasic;
 import java.util.List;
 
-public class WrapperSearch extends AbstractJsonMapping {
+public class SearchResults extends AbstractJsonMapping {
 
     @JsonProperty("Search")
     private List<OmdbVideoBasic> results;

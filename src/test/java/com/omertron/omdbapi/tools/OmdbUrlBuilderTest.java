@@ -62,31 +62,30 @@ public class OmdbUrlBuilderTest {
     }
 
     @Test
-    public void testCreateUrl1() throws OMDBException {
-        LOG.info("createUrl1");
+    public void testCreateSearch() throws OMDBException {
+        LOG.info("Create Search");
 
         String expResult = "http://www.omdbapi.com/?s=Star+Wars&y=1977";
-        String result = new OmdbUrlBuilder().setSearch("Star Wars").setYear(1977).create();
-
+        String result = OmdbUrlBuilder.create(new OmdbBuilder().setSearchTerm("Star Wars").setYear(1977).build());
         assertEquals("Failed text search", expResult, result);
     }
 
     @Test
-    public void testCreateUrl2() throws OMDBException {
-        LOG.info("createUrl2");
+    public void testCreateTitle() throws OMDBException {
+        LOG.info("Create Title");
 
         String expResult = "http://www.omdbapi.com/?t=True+Grit&y=1969";
-        String result = new OmdbUrlBuilder().setTitle("True Grit").setYear(1969).create();
+        String result = OmdbUrlBuilder.create(new OmdbBuilder().setTitle("True Grit").setYear(1969).build());
 
         assertEquals("Failed title search", expResult, result);
     }
 
     @Test
-    public void testCreateUrl3() throws OMDBException {
-        LOG.info("createUrl3");
+    public void testCreateImdb() throws OMDBException {
+        LOG.info("Create IMDB");
 
         String expResult = "http://www.omdbapi.com/?i=tt1285016";
-        String result = new OmdbUrlBuilder().setImdb("tt1285016").create();
+        String result = OmdbUrlBuilder.create(new OmdbBuilder().setImdbId("tt1285016").build());
 
         assertEquals("Failed Search test", expResult, result);
     }
@@ -109,16 +108,16 @@ public class OmdbUrlBuilderTest {
 
             switch (rt) {
                 case EPISODE:
-                    result = new OmdbUrlBuilder().setSearch(term).setTypeEpisode().create();
+                    result = OmdbUrlBuilder.create(new OmdbBuilder().setSearchTerm(term).setTypeEpisode().build());
                     break;
                 case MOVIE:
-                    result = new OmdbUrlBuilder().setSearch(term).setTypeMovie().create();
+                    result = OmdbUrlBuilder.create(new OmdbBuilder().setSearchTerm(term).setTypeMovie().build());
                     break;
                 case SERIES:
-                    result = new OmdbUrlBuilder().setSearch(term).setTypeSeries().create();
+                    result = OmdbUrlBuilder.create(new OmdbBuilder().setSearchTerm(term).setTypeSeries().build());
                     break;
                 case ALL:
-                    result = new OmdbUrlBuilder().setSearch(term).setType(rt).create();
+                    result = OmdbUrlBuilder.create(new OmdbBuilder().setSearchTerm(term).setResultType(rt).build());
                     break;
                 default:
                     throw new OMDBException(ApiExceptionType.UNKNOWN_CAUSE, "Unknown Result Type: " + rt.toString());

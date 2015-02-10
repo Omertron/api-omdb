@@ -20,12 +20,9 @@
 package com.omertron.omdbapi.tools;
 
 import com.omertron.omdbapi.OMDBException;
-import com.omertron.omdbapi.emumerations.DataType;
 import com.omertron.omdbapi.emumerations.PlotType;
-import com.omertron.omdbapi.emumerations.ResultType;
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yamj.api.common.exception.ApiExceptionType;
@@ -36,159 +33,68 @@ public class OmdbUrlBuilder {
     private static final String BASE_URL = "http://www.omdbapi.com/";
     private static final String DELIMITER_FIRST = "?";
     private static final String DELIMITER_SUBSEQUENT = "&";
-    // Parameter keys
-    private static final String PARAM_SEARCH = "s=";
-    private static final String PARAM_IMDB = "i=";
-    private static final String PARAM_TITLE = "t=";
-    private static final String PARAM_YEAR = "y=";
-    private static final String PARAM_DATA = "r=";
-    private static final String PARAM_RESULT = "type=";
-    private static final String PARAM_PLOT = "plot=";
-    private static final String PARAM_CALLBACK = "callback=";
-    private static final String PARAM_TOMATOES = "tomatoes=";
-    // Default values (if required)
-    private static final boolean DEFAULT_TOMATOES = Boolean.FALSE;
-    private static final int DEFAULT_YEAR = 1900;
-    // Parameter values
-    private String search = "";
-    private String imdb = "";
-    private String title = "";
-    private int year = 0;
-    private PlotType plot = PlotType.getDefault();
-    private String callback = "";
-    private boolean tomatoes = false;
-    private ResultType type = ResultType.getDefault();
-    private DataType response = DataType.getDefault();
 
-    public OmdbUrlBuilder() {
-    }
-
-    public OmdbUrlBuilder setSearch(String search) {
-        this.search = search;
-        return this;
-    }
-
-    public OmdbUrlBuilder setImdb(String imdb) {
-        this.imdb = imdb;
-        return this;
-    }
-
-    public OmdbUrlBuilder setTitle(String title) {
-        this.title = title;
-        return this;
-    }
-
-    public OmdbUrlBuilder setYear(int year) {
-        this.year = year;
-        return this;
-    }
-
-    public OmdbUrlBuilder setPlot(PlotType plot) {
-        this.plot = plot;
-        return this;
-    }
-
-    public OmdbUrlBuilder setPlotShort() {
-        this.plot = PlotType.SHORT;
-        return this;
-    }
-
-    public OmdbUrlBuilder setPlotLong() {
-        this.plot = PlotType.LONG;
-        return this;
-    }
-
-    public OmdbUrlBuilder setCallback(String callback) {
-        this.callback = callback;
-        return this;
-    }
-
-    public OmdbUrlBuilder setTomatoes(boolean tomatoes) {
-        this.tomatoes = tomatoes;
-        return this;
-    }
-
-    public OmdbUrlBuilder setData(DataType response) {
-        this.response = response;
-        return this;
-    }
-
-    public OmdbUrlBuilder setDataJson() {
-        this.response = DataType.JSON;
-        return this;
-    }
-
-    public OmdbUrlBuilder setDataXml() {
-        this.response = DataType.XML;
-        return this;
-    }
-
-    public OmdbUrlBuilder setType(ResultType type) {
-        this.type = type;
-        return this;
-    }
-
-    public OmdbUrlBuilder setTypeMovie() {
-        this.type = ResultType.MOVIE;
-        return this;
-    }
-
-    public OmdbUrlBuilder setTypeSeries() {
-        this.type = ResultType.SERIES;
-        return this;
-    }
-
-    public OmdbUrlBuilder setTypeEpisode() {
-        this.type = ResultType.EPISODE;
-        return this;
+    private OmdbUrlBuilder() {
+        throw new UnsupportedOperationException("Class cannot be initialised");
     }
 
     /**
-     * Create the String representation of the URL
+     * Create the String representation of the URL for passed parameters
      *
-     * @return
+     * @param params The parameters to use to create the URL
+     * @return String URL
      * @throws OMDBException
      */
-    public String create() throws OMDBException {
+    public static String create(final OmdbParameters params) throws OMDBException {
         StringBuilder sb = new StringBuilder(BASE_URL);
 
         sb.append(DELIMITER_FIRST);
-        if (StringUtils.isNotBlank(search)) {
-            sb.append(PARAM_SEARCH).append(search.replace(" ", "+"));
-        } else if (StringUtils.isNotBlank(imdb)) {
-            sb.append(PARAM_IMDB).append(imdb);
-        } else if (StringUtils.isNotBlank(title)) {
-            sb.append(PARAM_TITLE).append(title.replace(" ", "+"));
+        if (params.has(Param.SEARCH)) {
+            String search = (String) params.get(Param.SEARCH);
+            sb.append(Param.SEARCH.getValue()).append(search.replace(" ", "+"));
+        } else if (params.has(Param.IMDB)) {
+            sb.append(Param.IMDB.getValue()).append(params.get(Param.IMDB));
+        } else if (params.has(Param.TITLE)) {
+            String title = (String) params.get(Param.TITLE);
+            sb.append(Param.TITLE.getValue()).append(title.replace(" ", "+"));
         } else {
             throw new OMDBException(ApiExceptionType.INVALID_URL, "Must include a search or ID");
         }
 
-        if (year > DEFAULT_YEAR) {
-            sb.append(DELIMITER_SUBSEQUENT).append(PARAM_YEAR).append(year);
+        // Append the year
+        if (params.has(Param.YEAR)) {
+            appendParam(params, Param.YEAR, sb);
         }
 
         // Append the plot requirement
-        if (plot != PlotType.getDefault()) {
-            sb.append(DELIMITER_SUBSEQUENT).append(PARAM_PLOT).append(plot);
+        if (params.has(Param.PLOT)
+                && (PlotType) params.get(Param.PLOT) != PlotType.getDefault()) {
+            appendParam(params, Param.PLOT, sb);
         }
 
         // Append the tomatoes requirement
-        if (tomatoes != DEFAULT_TOMATOES) {
-            sb.append(DELIMITER_SUBSEQUENT).append(PARAM_TOMATOES).append(tomatoes);
+        if (params.has(Param.TOMATOES)) {
+            appendParam(params, Param.TOMATOES, sb);
         }
 
         // Append the Type
-        if (type != ResultType.getDefault()) {
-            sb.append(DELIMITER_SUBSEQUENT).append(PARAM_RESULT).append(type);
+        if (params.has(Param.RESULT)) {
+            appendParam(params, Param.RESULT, sb);
         }
 
-        // Append the JSON request
-        if (response != DataType.getDefault()) {
-            sb.append(DELIMITER_SUBSEQUENT).append(PARAM_DATA);
+        // Append the JSON request - This is not used by this API
+        if (params.has(Param.DATA)) {
+            appendParam(params, Param.DATA, sb);
         }
 
-        if (StringUtils.isNotBlank(callback)) {
-            sb.append(DELIMITER_SUBSEQUENT).append(PARAM_CALLBACK).append(callback);
+        // Append the version
+        if (params.has(Param.VERSION)) {
+            appendParam(params, Param.VERSION, sb);
+        }
+
+        // Append the callback function - This is not used by this API
+        if (params.has(Param.CALLBACK)) {
+            appendParam(params, Param.CALLBACK, sb);
         }
 
         LOG.trace("Created URL: {}", sb.toString());
@@ -196,29 +102,39 @@ public class OmdbUrlBuilder {
     }
 
     /**
-     * Create a URL object
+     * Create URL for the passed parameters
      *
-     * @return
+     * @param params The parameters to use to create the URL
+     * @return String URL
      * @throws OMDBException
      */
-    public URL createUrl() throws OMDBException {
-        return createUrl(create());
+    public static URL createUrl(final OmdbParameters params) throws OMDBException {
+        return generateUrl(create(params));
     }
 
     /**
-     * Create a URL object from a String URL
+     * Append a parameter and value to the URL line
+     *
+     * @param params The parameter list
+     * @param p The parameter to add
+     * @param sb The StringBuilder instance to use
+     */
+    private static void appendParam(final OmdbParameters params, final Param p, StringBuilder sb) {
+        sb.append(DELIMITER_SUBSEQUENT).append(p.getValue()).append(params.get(p));
+    }
+
+    /**
+     * Generate a URL object from a String URL
      *
      * @param url
      * @return
      * @throws OMDBException
      */
-    public URL createUrl(String url) throws OMDBException {
-        URL omdbUrl = null;
+    public static URL generateUrl(final String url) throws OMDBException {
         try {
-            omdbUrl = new URL(url);
+            return new URL(url);
         } catch (MalformedURLException ex) {
             throw new OMDBException(ApiExceptionType.INVALID_URL, "Failed to create URL", url, ex);
         }
-        return omdbUrl;
     }
 }

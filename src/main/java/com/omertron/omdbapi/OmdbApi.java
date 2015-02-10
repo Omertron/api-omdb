@@ -20,15 +20,15 @@
 package com.omertron.omdbapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.omertron.omdbapi.emumerations.PlotType;
 import com.omertron.omdbapi.model.OmdbVideoFull;
+import com.omertron.omdbapi.model.SearchResults;
+import com.omertron.omdbapi.tools.OmdbBuilder;
+import com.omertron.omdbapi.tools.OmdbParameters;
 import com.omertron.omdbapi.tools.OmdbUrlBuilder;
-import com.omertron.omdbapi.wrapper.WrapperSearch;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.protocol.HTTP;
@@ -48,11 +48,7 @@ import org.yamj.api.common.http.UserAgentSelector;
 public class OmdbApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(OmdbApi.class);
-    private static final int DEFAULT_YEAR = 0;
     private final CloseableHttpClient httpClient;
-    private boolean tomatoes = Boolean.FALSE;
-    private PlotType plotLength = PlotType.getDefault();
-    private String callback = "";
     // Jackson JSON configuration
     private static ObjectMapper mapper = new ObjectMapper();
     // HTTP Status codes
@@ -61,9 +57,8 @@ public class OmdbApi {
     private static final String DEFAULT_CHARSET = "UTF-8";
     private final Charset charset;
 
-    //<editor-fold defaultstate="collapsed" desc="Constructors">
     /**
-     * Create an instance of the API with the default HTTP Client
+     * Create an instance of the API with a default HTTP Client
      */
     public OmdbApi() {
         this(new SimpleHttpClientBuilder().build());
@@ -78,72 +73,6 @@ public class OmdbApi {
         this.httpClient = httpClient;
         this.charset = Charset.forName(DEFAULT_CHARSET);
     }
-    //</editor-fold>
-
-    //<editor-fold defaultstate="collapsed" desc="Configuration">
-    /**
-     * Is Rotten Tomatoes data added automatically?
-     *
-     * @return TRUE will add the data, FALSE will not.
-     */
-    public boolean isTomatoes() {
-        return this.tomatoes;
-    }
-
-    /**
-     * Add rotten tomatoes data automatically to each request.
-     *
-     * TRUE will add the data, FALSE will not.
-     *
-     * @param defaultTomatoes
-     */
-    public void setTomatoes(boolean defaultTomatoes) {
-        this.tomatoes = defaultTomatoes;
-    }
-
-    /**
-     * Is a long plot returned by default?
-     *
-     * TRUE for the long plot, FALSE for short.
-     *
-     * @return
-     */
-    public PlotType getPlotLength() {
-        return this.plotLength;
-    }
-
-    /**
-     * Return the long plot automatically
-     */
-    public void setLongPlot() {
-        this.plotLength = PlotType.LONG;
-    }
-
-    /**
-     * Return the short plot automatically
-     */
-    public void setShortPlot() {
-        this.plotLength = PlotType.SHORT;
-    }
-
-    /**
-     * Return the current callback parameter added to each request
-     *
-     * @return
-     */
-    public String getCallback() {
-        return this.callback;
-    }
-
-    /**
-     * Set the callback parameter to be added to each request
-     *
-     * @param callback
-     */
-    public void setCallback(String callback) {
-        this.callback = callback;
-    }
-    //</editor-fold>
 
     private String requestWebPage(URL url) throws OMDBException {
         LOG.trace("Requesting: {}", url.toString());
@@ -169,14 +98,46 @@ public class OmdbApi {
     }
 
     /**
+     * Execute a search using the passed parameters.
+     *
+     * To create the parameters use the OmdbBuilder builder:
+     * <p>
+     * E.G.: build(new OmdbBuilder(term).setYear(1900).build());
+     *
+     * @param searchParams Use the OmdbBuilder to build the parameters
+     * @return
+     * @throws com.omertron.omdbapi.OMDBException
+     */
+    public SearchResults search(OmdbParameters searchParams) throws OMDBException {
+        SearchResults resultList;
+
+        String url = OmdbUrlBuilder.create(searchParams);
+        LOG.info("URL: {}", url);
+
+        // Get the JSON
+        String jsonData = requestWebPage(OmdbUrlBuilder.generateUrl(url));
+
+        // Process the JSON into an object
+        try {
+            resultList = mapper.readValue(jsonData, SearchResults.class);
+        } catch (IOException ex) {
+            throw new OMDBException(ApiExceptionType.MAPPING_FAILED, jsonData, 0, url, ex);
+        }
+
+        return resultList;
+    }
+
+    /**
      * Get a list of movies using the movie title.
      *
      * @param title
      * @return
      * @throws OMDBException
      */
-    public WrapperSearch search(String title) throws OMDBException {
-        return search(title, DEFAULT_YEAR);
+    public SearchResults search(String title) throws OMDBException {
+        return search(new OmdbBuilder()
+                .setSearchTerm(title)
+                .build());
     }
 
     /**
@@ -187,74 +148,23 @@ public class OmdbApi {
      * @return
      * @throws OMDBException
      */
-    public WrapperSearch search(String title, int year) throws OMDBException {
-        WrapperSearch resultList;
-        URL url = new OmdbUrlBuilder().setSearch(title).setYear(year).createUrl();
-
-        // Get the JSON
-        String jsonData = requestWebPage(url);
-
-        // Process the JSON into an object
-        try {
-            resultList = mapper.readValue(jsonData, WrapperSearch.class);
-        } catch (IOException ex) {
-            throw new OMDBException(ApiExceptionType.MAPPING_FAILED, jsonData, 0, url, ex);
-        }
-
-        return resultList;
+    public SearchResults search(String title, int year) throws OMDBException {
+        return search(new OmdbBuilder()
+                .setSearchTerm(title)
+                .setYear(year)
+                .build());
     }
 
     /**
-     * Get movie information using only the title or IMDB ID
+     * Get movie information using the supplied parameters
      *
-     * @param query
+     * @param parameters parameters to use to retrieve the information
      * @return
      * @throws OMDBException
      */
-    public OmdbVideoFull movieInfo(String query) throws OMDBException {
-        return movieInfo(query, DEFAULT_YEAR, plotLength, tomatoes);
-    }
-
-    /**
-     * Get movie information using only the title or IMDB ID
-     *
-     * @param query
-     * @param year
-     * @return
-     * @throws OMDBException
-     */
-    public OmdbVideoFull movieInfo(String query, int year) throws OMDBException {
-        return movieInfo(query, year, plotLength, tomatoes);
-    }
-
-    /**
-     * Get movie information using the title or IMDB ID and with specific plot
-     * length & RT data
-     *
-     * @param query
-     * @param year
-     * @param plotType
-     * @param tomatoes
-     * @return
-     * @throws OMDBException
-     */
-    public OmdbVideoFull movieInfo(String query, int year, PlotType plotType, boolean tomatoes) throws OMDBException {
+    public OmdbVideoFull getInfo(OmdbParameters parameters) throws OMDBException {
         OmdbVideoFull result;
-        URL url;
-        OmdbUrlBuilder base = new OmdbUrlBuilder();
-
-        if (StringUtils.startsWith(query, "tt")) {
-            // IMDB Query
-            base = base.setImdb(query);
-        } else {
-            // Title query
-            base = base.setTitle(query);
-        }
-        // Set the rest of the parameters
-        base = base.setYear(year).setPlot(plotType).setTomatoes(tomatoes);
-
-        // Get the URL
-        url = base.createUrl();
+        URL url = OmdbUrlBuilder.createUrl(parameters);
 
         // Get the JSON
         String jsonData = requestWebPage(url);

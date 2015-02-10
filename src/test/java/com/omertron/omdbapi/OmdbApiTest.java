@@ -19,10 +19,10 @@
  */
 package com.omertron.omdbapi;
 
-import com.omertron.omdbapi.emumerations.PlotType;
 import com.omertron.omdbapi.model.OmdbVideoBasic;
 import com.omertron.omdbapi.model.OmdbVideoFull;
-import com.omertron.omdbapi.wrapper.WrapperSearch;
+import com.omertron.omdbapi.model.SearchResults;
+import com.omertron.omdbapi.tools.OmdbBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -32,6 +32,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,6 @@ import org.slf4j.LoggerFactory;
  * @author Stuart
  */
 public class OmdbApiTest {
-    // Logger
 
     private static final Logger LOG = LoggerFactory.getLogger(OmdbApiTest.class);
     private static final OmdbApi omdb = new OmdbApi();
@@ -66,63 +66,22 @@ public class OmdbApiTest {
     public void tearDown() {
     }
 
-    /**
-     * Test of Rotten Tomatoes methods, of class OmdbApi.
-     */
     @Test
-    public void testTomatoes() {
-        LOG.info("testTomatoes");
-        boolean defaultTomatoes = false;
-        omdb.setTomatoes(defaultTomatoes);
-        assertEquals("Failed to set rotten tomatoes default (" + defaultTomatoes + ")", defaultTomatoes, omdb.isTomatoes());
-
-        defaultTomatoes = true;
-        omdb.setTomatoes(defaultTomatoes);
-        assertEquals("Failed to set rotten tomatoes default (" + defaultTomatoes + ")", defaultTomatoes, omdb.isTomatoes());
+    public void testSearch() throws OMDBException {
+        SearchResults response = omdb.search(new OmdbBuilder().setSearchTerm("Star Wars").setYear(1977).build());
+        LOG.info(response.toString());
     }
 
     /**
-     * Test of PlotType methods, of class OmdbApi.
-     */
-    @Test
-    public void testPlotType() {
-        LOG.info("testPlotType");
-        omdb.setLongPlot();
-        assertEquals("Failed to set long plot", PlotType.LONG, omdb.getPlotLength());
-
-        omdb.setShortPlot();
-        assertEquals("Failed to set short plot", PlotType.SHORT, omdb.getPlotLength());
-    }
-
-    /**
-     * Test of Callback methods, of class OmdbApi.
-     */
-    @Test
-    public void testCallback() {
-        LOG.info("getCallback");
-
-        String callback1 = "This is my callback?!?";
-        String callback2 = "I need a better callback!!";
-
-        omdb.setCallback(callback1);
-        String result = omdb.getCallback();
-        assertEquals("Callback was not set/read correctly", callback1, result);
-
-        omdb.setCallback(callback2);
-        result = omdb.getCallback();
-        assertEquals("Callback was not set/read correctly", callback2, result);
-    }
-
-    /**
-     * Test of search method, of class OmdbApi.
+     * Test of build method, of class OmdbApi.
      *
      * @throws OMDBException
      */
-    @Test
+    @Ignore
     public void testSearch_String() throws OMDBException {
         LOG.info("Search - Title");
         String title = "Star Wars";
-        WrapperSearch result = omdb.search(title);
+        SearchResults result = omdb.search(title);
         assertNotNull("Null search returned", result);
         assertTrue("Error response", result.isResponse());
         assertTrue("No records found", result.getResults().size() > 0);
@@ -138,16 +97,16 @@ public class OmdbApiTest {
     }
 
     /**
-     * Test of search method, of class OmdbApi.
+     * Test of build method, of class OmdbApi.
      *
      * @throws OMDBException
      */
-    @Test
+    @Ignore
     public void testSearch_String_int() throws OMDBException {
         LOG.info("Search - Title & Year");
         String title = "Star Wars";
         int year = 1977;
-        WrapperSearch result = omdb.search(title, year);
+        SearchResults result = omdb.search(title, year);
         assertNotNull("Null search returned", result);
         assertTrue("Error response", result.isResponse());
         assertTrue("No records found", result.getResults().size() > 0);
@@ -163,48 +122,49 @@ public class OmdbApiTest {
     }
 
     /**
-     * Test of movieInfo method, of class OmdbApi.
+     * Test of getInfo method, of class OmdbApi.
      *
      * @throws OMDBException
      */
-    @Test
+    @Ignore
     public void testMovieInfo_ByName() throws OMDBException {
         LOG.info("movieInfo_ByName");
         String query = "Blade Runner";
-        OmdbVideoFull result = omdb.movieInfo(query);
+        OmdbVideoFull result = omdb.getInfo(new OmdbBuilder().setTitle(query).build());
         assertEquals("Wrong movie returned", "tt0083658", result.getImdbID());
     }
 
     /**
-     * Test of movieInfo method, of class OmdbApi.
+     * Test of getInfo method, of class OmdbApi.
      *
      * @throws OMDBException
      */
-    @Test
+    @Ignore
     public void testMovieInfo_ByTT() throws OMDBException {
         LOG.info("movieInfo_ByTT");
         String query = "tt0083658";
-        OmdbVideoFull result = omdb.movieInfo(query);
+        OmdbVideoFull result = omdb.getInfo(new OmdbBuilder().setImdbId(query).build());
         assertEquals("Wrong movie returned", "Blade Runner", result.getTitle());
     }
 
     /**
-     * Test of movieInfo method, of class OmdbApi.
+     * Test of getInfo method, of class OmdbApi.
      *
      * @throws OMDBException
      */
-    @Test
+    @Ignore
     public void testMovieInfo_4args() throws OMDBException {
         LOG.info("movieInfo - All args");
 
-        OmdbVideoFull result = omdb.movieInfo("Blade Runner", 1982, PlotType.LONG, true);
+        OmdbVideoFull result = omdb.getInfo(new OmdbBuilder().setTitle("Blade Runner").setYear(1982).setPlotLong().setTomatoes(true).build());
+
         assertNotNull("Null object returned", result);
         assertTrue("Error with call", result.isResponse());
         assertEquals("Wrong video returned", "tt0083658", result.getImdbID());
         assertTrue("No RT data", StringUtils.isNotBlank(result.getTomatoConsensus()));
 
         try {
-            result = omdb.movieInfo("Some movie that can't be found at all", 0, PlotType.SHORT, false);
+            result = omdb.getInfo(new OmdbBuilder().setTitle("Some movie that can't be found at all").build());
             assertFalse("What do you mean this was found?", result.isResponse());
         } catch (OMDBException ex) {
             assertNotNull("Null object returned", result);
