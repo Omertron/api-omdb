@@ -29,8 +29,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +48,7 @@ import org.yamj.api.common.http.UserAgentSelector;
 public class OmdbApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(OmdbApi.class);
-    private final CloseableHttpClient httpClient;
+    private final HttpClient httpClient;
     // Jackson JSON configuration
     private static ObjectMapper mapper = new ObjectMapper();
     // HTTP Status codes
@@ -69,7 +69,7 @@ public class OmdbApi {
      *
      * @param httpClient
      */
-    public OmdbApi(CloseableHttpClient httpClient) {
+    public OmdbApi(HttpClient httpClient) {
         this.httpClient = httpClient;
         this.charset = Charset.forName(DEFAULT_CHARSET);
     }
