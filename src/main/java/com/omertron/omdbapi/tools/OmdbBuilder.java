@@ -211,10 +211,7 @@ public final class OmdbBuilder {
      * @return
      */
     public OmdbBuilder setTomatoesOn() {
-        if (DEFAULT_TOMATOES != true) {
-            params.add(Param.TOMATOES, true);
-        }
-        return this;
+        return setTomatoes(true);
     }
 
     /**
@@ -223,10 +220,7 @@ public final class OmdbBuilder {
      * @return
      */
     public OmdbBuilder setTomatoesOff() {
-        if (DEFAULT_TOMATOES != false) {
-            params.add(Param.TOMATOES, false);
-        }
-        return this;
+        return setTomatoes(false);
     }
 
     /**

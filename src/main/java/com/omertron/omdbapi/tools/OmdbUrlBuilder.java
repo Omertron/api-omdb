@@ -62,9 +62,7 @@ public class OmdbUrlBuilder {
         }
 
         // Append the year
-        if (params.has(Param.YEAR)) {
-            appendParam(params, Param.YEAR, sb);
-        }
+        appendParam(params, Param.YEAR, sb);
 
         // Append the plot requirement
         if (params.has(Param.PLOT)
@@ -73,29 +71,19 @@ public class OmdbUrlBuilder {
         }
 
         // Append the tomatoes requirement
-        if (params.has(Param.TOMATOES)) {
-            appendParam(params, Param.TOMATOES, sb);
-        }
+        appendParam(params, Param.TOMATOES, sb);
 
         // Append the Type
-        if (params.has(Param.RESULT)) {
-            appendParam(params, Param.RESULT, sb);
-        }
+        appendParam(params, Param.RESULT, sb);
 
         // Append the JSON request - This is not used by this API
-        if (params.has(Param.DATA)) {
-            appendParam(params, Param.DATA, sb);
-        }
+        appendParam(params, Param.DATA, sb);
 
         // Append the version
-        if (params.has(Param.VERSION)) {
-            appendParam(params, Param.VERSION, sb);
-        }
+        appendParam(params, Param.VERSION, sb);
 
         // Append the callback function - This is not used by this API
-        if (params.has(Param.CALLBACK)) {
-            appendParam(params, Param.CALLBACK, sb);
-        }
+        appendParam(params, Param.CALLBACK, sb);
 
         LOG.trace("Created URL: {}", sb.toString());
         return sb.toString();
@@ -116,11 +104,13 @@ public class OmdbUrlBuilder {
      * Append a parameter and value to the URL line
      *
      * @param params The parameter list
-     * @param p The parameter to add
+     * @param key The parameter to add
      * @param sb The StringBuilder instance to use
      */
-    private static void appendParam(final OmdbParameters params, final Param p, StringBuilder sb) {
-        sb.append(DELIMITER_SUBSEQUENT).append(p.getValue()).append(params.get(p));
+    private static void appendParam(final OmdbParameters params, final Param key, StringBuilder sb) {
+        if (params.has(key)) {
+            sb.append(DELIMITER_SUBSEQUENT).append(key.getValue()).append(params.get(key));
+        }
     }
 
     /**
