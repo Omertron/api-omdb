@@ -5,13 +5,9 @@ Author: Stuart Boston (Omertron AT Gmail DOT com)
 
 This API uses the [omdbapi.com API](http://omdbapi.com/)
 
-Originally written for use by Yet Another Movie Jukebox [(YAMJ)](http://code.google.com/p/moviejukebox/)
+Originally written for use by YetAnotherMovieJukebox ([YAMJv2](https://github.com/YAMJ/yamj-v2) & [YAMJv3](https://github.com/YAMJ/yamj-v3)), but anyone can feel free to use it for other projects as well.
 
-But anyone can use it for other projects as well.
-
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=Omertron&url=https://github.com/Omertron/api-omdb&title=Open Movie Database API&language=&tags=github&category=software)
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Omertron/api-omdb/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+[![Build Status](http://jenkins.omertron.com/job/API-OMDB/badge/icon)](http://jenkins.omertron.com/job/API-OMDB)
 
 ***
 ### OMDBAPI.com
