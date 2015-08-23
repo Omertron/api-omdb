@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.lang3.math.NumberUtils;
 
 public class OmdbVideoFull extends OmdbVideoBasic implements Serializable {
 
@@ -317,8 +318,10 @@ public class OmdbVideoFull extends OmdbVideoBasic implements Serializable {
         this.awards = awards;
     }
 
-    public void setMetascore(int metascore) {
-        this.metascore = metascore;
+    public void setMetascore(String metascore) {
+        if (NumberUtils.isParsable(metascore)) {
+            this.metascore = NumberUtils.toInt(metascore);
+        }
     }
     //</editor-fold>
 
