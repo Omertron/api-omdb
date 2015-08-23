@@ -23,6 +23,8 @@ import com.omertron.omdbapi.model.OmdbVideoBasic;
 import com.omertron.omdbapi.model.OmdbVideoFull;
 import com.omertron.omdbapi.model.SearchResults;
 import com.omertron.omdbapi.tools.OmdbBuilder;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -32,7 +34,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,7 @@ public class OmdbApiTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(OmdbApiTest.class);
     private static final OmdbApi omdb = new OmdbApi();
+    private static final List<TestID> IDS = new ArrayList<>();
 
     public OmdbApiTest() {
     }
@@ -52,6 +54,9 @@ public class OmdbApiTest {
     @BeforeClass
     public static void setUpClass() {
         TestLogger.Configure();
+
+        IDS.add(new TestID("Blade Runner", 1982, "tt0083658"));
+        IDS.add(new TestID("Mr. Robot", 2015, "tt4158110"));
     }
 
     @AfterClass
@@ -77,23 +82,27 @@ public class OmdbApiTest {
      *
      * @throws OMDBException
      */
-    @Ignore
+    @Test
     public void testSearch_String() throws OMDBException {
         LOG.info("Search - Title");
-        String title = "Star Wars";
-        SearchResults result = omdb.search(title);
-        assertNotNull("Null search returned", result);
-        assertTrue("Error response", result.isResponse());
-        assertTrue("No records found", result.getResults().size() > 0);
 
-        boolean found = false;
-        for (OmdbVideoBasic movie : result.getResults()) {
-            if (StringUtils.equals("tt0076759", movie.getImdbID())) {
-                found = true;
-                break;
+        for (TestID test : IDS) {
+            LOG.info("Testing: '{}'", test.getTitle());
+
+            SearchResults result = omdb.search(test.getTitle());
+            assertNotNull("Null search returned", result);
+            assertTrue("Error response", result.isResponse());
+            assertTrue("No records found", result.getResults().size() > 0);
+
+            boolean found = false;
+            for (OmdbVideoBasic movie : result.getResults()) {
+                if (StringUtils.equals(test.getImdb(), movie.getImdbID())) {
+                    found = true;
+                    break;
+                }
             }
+            assertTrue("Movie not found in search results", found);
         }
-        assertTrue("Movie not found in search results", found);
     }
 
     /**
@@ -101,24 +110,25 @@ public class OmdbApiTest {
      *
      * @throws OMDBException
      */
-    @Ignore
+    @Test
     public void testSearch_String_int() throws OMDBException {
         LOG.info("Search - Title & Year");
-        String title = "Star Wars";
-        int year = 1977;
-        SearchResults result = omdb.search(title, year);
-        assertNotNull("Null search returned", result);
-        assertTrue("Error response", result.isResponse());
-        assertTrue("No records found", result.getResults().size() > 0);
+        for (TestID test : IDS) {
+            LOG.info("Testing: '{}'", test.getTitle());
+            SearchResults result = omdb.search(test.getTitle(), test.getYear());
+            assertNotNull("Null search returned", result);
+            assertTrue("Error response", result.isResponse());
+            assertTrue("No records found", result.getResults().size() > 0);
 
-        boolean found = false;
-        for (OmdbVideoBasic movie : result.getResults()) {
-            if (StringUtils.equals("tt0076759", movie.getImdbID())) {
-                found = true;
-                break;
+            boolean found = false;
+            for (OmdbVideoBasic movie : result.getResults()) {
+                if (StringUtils.equals(test.getImdb(), movie.getImdbID())) {
+                    found = true;
+                    break;
+                }
             }
+            assertTrue("Movie not found in search results", found);
         }
-        assertTrue("Movie not found in search results", found);
     }
 
     /**
@@ -126,12 +136,15 @@ public class OmdbApiTest {
      *
      * @throws OMDBException
      */
-    @Ignore
+    @Test
     public void testMovieInfo_ByName() throws OMDBException {
         LOG.info("movieInfo_ByName");
-        String query = "Blade Runner";
-        OmdbVideoFull result = omdb.getInfo(new OmdbBuilder().setTitle(query).build());
-        assertEquals("Wrong movie returned", "tt0083658", result.getImdbID());
+
+        for (TestID test : IDS) {
+            LOG.info("Testing: '{}'", test.getTitle());
+            OmdbVideoFull result = omdb.getInfo(new OmdbBuilder().setTitle(test.getTitle()).build());
+            assertEquals("Wrong movie returned", test.getImdb(), result.getImdbID());
+        }
     }
 
     /**
@@ -139,12 +152,15 @@ public class OmdbApiTest {
      *
      * @throws OMDBException
      */
-    @Ignore
+    @Test
     public void testMovieInfo_ByTT() throws OMDBException {
         LOG.info("movieInfo_ByTT");
-        String query = "tt0083658";
-        OmdbVideoFull result = omdb.getInfo(new OmdbBuilder().setImdbId(query).build());
-        assertEquals("Wrong movie returned", "Blade Runner", result.getTitle());
+
+        for (TestID test : IDS) {
+            LOG.info("Testing: '{}'", test.getTitle());
+            OmdbVideoFull result = omdb.getInfo(new OmdbBuilder().setImdbId(test.getImdb()).build());
+            assertEquals("Wrong movie returned", test.getTitle(), result.getTitle());
+        }
     }
 
     /**
@@ -152,16 +168,21 @@ public class OmdbApiTest {
      *
      * @throws OMDBException
      */
-    @Ignore
+    @Test
     public void testMovieInfo_4args() throws OMDBException {
         LOG.info("movieInfo - All args");
+        OmdbVideoFull result = null;
 
-        OmdbVideoFull result = omdb.getInfo(new OmdbBuilder().setTitle("Blade Runner").setYear(1982).setPlotLong().setTomatoes(true).build());
+        for (TestID test : IDS) {
+            LOG.info("Testing: '{}'", test.getTitle());
 
-        assertNotNull("Null object returned", result);
-        assertTrue("Error with call", result.isResponse());
-        assertEquals("Wrong video returned", "tt0083658", result.getImdbID());
-        assertTrue("No RT data", StringUtils.isNotBlank(result.getTomatoConsensus()));
+            result = omdb.getInfo(new OmdbBuilder().setTitle(test.getTitle()).setYear(test.getYear()).setPlotLong().setTomatoes(true).build());
+
+            assertNotNull("Null object returned", result);
+            assertTrue("Error with call", result.isResponse());
+            assertEquals("Wrong video returned", test.getImdb(), result.getImdbID());
+            assertTrue("No RT data", StringUtils.isNotBlank(result.getTomatoConsensus()));
+        }
 
         try {
             result = omdb.getInfo(new OmdbBuilder().setTitle("Some movie that can't be found at all").build());
