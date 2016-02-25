@@ -22,15 +22,15 @@ package com.omertron.omdbapi.tools;
 import com.omertron.omdbapi.OMDBException;
 import com.omertron.omdbapi.TestLogger;
 import com.omertron.omdbapi.emumerations.ResultType;
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yamj.api.common.exception.ApiExceptionType;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -41,24 +41,9 @@ public class OmdbUrlBuilderTest {
     // Logger
     private static final Logger LOG = LoggerFactory.getLogger(OmdbUrlBuilderTest.class);
 
-    public OmdbUrlBuilderTest() {
-    }
-
     @BeforeClass
     public static void setUpClass() {
-        TestLogger.Configure();
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
+        TestLogger.configure();
     }
 
     @Test

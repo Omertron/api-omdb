@@ -29,17 +29,42 @@ public class TestID {
     private String imdb;
     private String other;
 
-    public TestID() {
+    /**
+     * Default constructor with NO data
+     */
+    private TestID() {
+        this("", "");
     }
 
+    /**
+     * Constructor with name and IMDB ID
+     *
+     * @param name
+     * @param imdb
+     */
     public TestID(String name, String imdb) {
         this(name, 0, imdb, "");
     }
 
+    /**
+     * Constructor with name, year and IMDB ID
+     *
+     * @param name
+     * @param year
+     * @param imdb
+     */
     public TestID(String name, int year, String imdb) {
         this(name, year, imdb, "");
     }
 
+    /**
+     * Constructor with all values
+     *
+     * @param name
+     * @param year
+     * @param imdb
+     * @param other
+     */
     public TestID(String name, int year, String imdb, String other) {
         this.title = name;
         this.year = year;

@@ -46,6 +46,7 @@ public final class OmdbBuilder {
      *
      */
     public OmdbBuilder() {
+        // Create an empty builder.
     }
 
     /**

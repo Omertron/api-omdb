@@ -26,17 +26,14 @@ import com.omertron.omdbapi.tools.OmdbBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -45,35 +42,21 @@ import org.slf4j.LoggerFactory;
 public class OmdbApiTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(OmdbApiTest.class);
-    private static final OmdbApi omdb = new OmdbApi();
+    private static final OmdbApi OMDB = new OmdbApi();
     private static final List<TestID> IDS = new ArrayList<>();
-
-    public OmdbApiTest() {
-    }
+    private static final String TESTING = "Testing: '{}'";
 
     @BeforeClass
     public static void setUpClass() {
-        TestLogger.Configure();
+        TestLogger.configure();
 
         IDS.add(new TestID("Blade Runner", 1982, "tt0083658"));
         IDS.add(new TestID("Mr. Robot", 2015, "tt4158110"));
     }
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
-    }
-
     @Test
     public void testSearch() throws OMDBException {
-        SearchResults response = omdb.search(new OmdbBuilder().setSearchTerm("Star Wars").setYear(1977).build());
+        SearchResults response = OMDB.search(new OmdbBuilder().setSearchTerm("Star Wars").setYear(1977).build());
         LOG.info(response.toString());
     }
 
@@ -83,13 +66,13 @@ public class OmdbApiTest {
      * @throws OMDBException
      */
     @Test
-    public void testSearch_String() throws OMDBException {
+    public void testSearchString() throws OMDBException {
         LOG.info("Search - Title");
 
         for (TestID test : IDS) {
-            LOG.info("Testing: '{}'", test.getTitle());
+            LOG.info(TESTING, test.getTitle());
 
-            SearchResults result = omdb.search(test.getTitle());
+            SearchResults result = OMDB.search(test.getTitle());
             assertNotNull("Null search returned", result);
             assertTrue("Error response", result.isResponse());
             assertTrue("No records found", result.getResults().size() > 0);
@@ -111,11 +94,11 @@ public class OmdbApiTest {
      * @throws OMDBException
      */
     @Test
-    public void testSearch_String_int() throws OMDBException {
+    public void testSearchStringInt() throws OMDBException {
         LOG.info("Search - Title & Year");
         for (TestID test : IDS) {
-            LOG.info("Testing: '{}'", test.getTitle());
-            SearchResults result = omdb.search(test.getTitle(), test.getYear());
+            LOG.info(TESTING, test.getTitle());
+            SearchResults result = OMDB.search(test.getTitle(), test.getYear());
             assertNotNull("Null search returned", result);
             assertTrue("Error response", result.isResponse());
             assertTrue("No records found", result.getResults().size() > 0);
@@ -137,12 +120,12 @@ public class OmdbApiTest {
      * @throws OMDBException
      */
     @Test
-    public void testMovieInfo_ByName() throws OMDBException {
+    public void testMovieInfoByName() throws OMDBException {
         LOG.info("movieInfo_ByName");
 
         for (TestID test : IDS) {
-            LOG.info("Testing: '{}'", test.getTitle());
-            OmdbVideoFull result = omdb.getInfo(new OmdbBuilder().setTitle(test.getTitle()).build());
+            LOG.info(TESTING, test.getTitle());
+            OmdbVideoFull result = OMDB.getInfo(new OmdbBuilder().setTitle(test.getTitle()).build());
             assertEquals("Wrong movie returned", test.getImdb(), result.getImdbID());
         }
     }
@@ -153,12 +136,12 @@ public class OmdbApiTest {
      * @throws OMDBException
      */
     @Test
-    public void testMovieInfo_ByTT() throws OMDBException {
+    public void testMovieInfoByTT() throws OMDBException {
         LOG.info("movieInfo_ByTT");
 
         for (TestID test : IDS) {
-            LOG.info("Testing: '{}'", test.getTitle());
-            OmdbVideoFull result = omdb.getInfo(new OmdbBuilder().setImdbId(test.getImdb()).build());
+            LOG.info(TESTING, test.getTitle());
+            OmdbVideoFull result = OMDB.getInfo(new OmdbBuilder().setImdbId(test.getImdb()).build());
             assertEquals("Wrong movie returned", test.getTitle(), result.getTitle());
         }
     }
@@ -169,14 +152,14 @@ public class OmdbApiTest {
      * @throws OMDBException
      */
     @Test
-    public void testMovieInfo_4args() throws OMDBException {
+    public void testMovieInfo4args() throws OMDBException {
         LOG.info("movieInfo - All args");
         OmdbVideoFull result = null;
 
         for (TestID test : IDS) {
-            LOG.info("Testing: '{}'", test.getTitle());
+            LOG.info(TESTING, test.getTitle());
 
-            result = omdb.getInfo(new OmdbBuilder().setTitle(test.getTitle()).setYear(test.getYear()).setPlotLong().setTomatoes(true).build());
+            result = OMDB.getInfo(new OmdbBuilder().setTitle(test.getTitle()).setYear(test.getYear()).setPlotLong().setTomatoes(true).build());
 
             assertNotNull("Null object returned", result);
             assertTrue("Error with call", result.isResponse());
@@ -185,7 +168,7 @@ public class OmdbApiTest {
         }
 
         try {
-            result = omdb.getInfo(new OmdbBuilder().setTitle("Some movie that can't be found at all").build());
+            result = OMDB.getInfo(new OmdbBuilder().setTitle("Some movie that can't be found at all").build());
             assertFalse("What do you mean this was found?", result.isResponse());
         } catch (OMDBException ex) {
             assertNotNull("Null object returned", result);
