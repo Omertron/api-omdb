@@ -1,5 +1,5 @@
 /*
- *      Copyright (c) 2013-2015 Stuart Boston
+ *      Copyright (c) 2013-2016 Stuart Boston
  *
  *      This file is part of the OMDB API.
  *
