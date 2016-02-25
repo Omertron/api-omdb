@@ -73,18 +73,7 @@ public class OmdbApiTest {
             LOG.info(TESTING, test.getTitle());
 
             SearchResults result = OMDB.search(test.getTitle());
-            assertNotNull("Null search returned", result);
-            assertTrue("Error response", result.isResponse());
-            assertTrue("No records found", result.getResults().size() > 0);
-
-            boolean found = false;
-            for (OmdbVideoBasic movie : result.getResults()) {
-                if (StringUtils.equals(test.getImdb(), movie.getImdbID())) {
-                    found = true;
-                    break;
-                }
-            }
-            assertTrue("Movie not found in search results", found);
+            validateSearch(result, test.getImdb());
         }
     }
 
@@ -99,19 +88,24 @@ public class OmdbApiTest {
         for (TestID test : IDS) {
             LOG.info(TESTING, test.getTitle());
             SearchResults result = OMDB.search(test.getTitle(), test.getYear());
-            assertNotNull("Null search returned", result);
-            assertTrue("Error response", result.isResponse());
-            assertTrue("No records found", result.getResults().size() > 0);
-
-            boolean found = false;
-            for (OmdbVideoBasic movie : result.getResults()) {
-                if (StringUtils.equals(test.getImdb(), movie.getImdbID())) {
-                    found = true;
-                    break;
-                }
-            }
-            assertTrue("Movie not found in search results", found);
+            validateSearch(result, test.getImdb());
         }
+    }
+
+    private void validateSearch(SearchResults result, String imdb) {
+        assertNotNull("Null search returned", result);
+        assertTrue("Error response", result.isResponse());
+        assertTrue("No records found", result.getResults().size() > 0);
+
+        boolean found = false;
+        for (OmdbVideoBasic movie : result.getResults()) {
+            if (StringUtils.equals(imdb, movie.getImdbID())) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("Movie not found in search results", found);
+
     }
 
     /**
@@ -171,6 +165,7 @@ public class OmdbApiTest {
             result = OMDB.getInfo(new OmdbBuilder().setTitle("Some movie that can't be found at all").build());
             assertFalse("What do you mean this was found?", result.isResponse());
         } catch (OMDBException ex) {
+            LOG.info("Exception encountered: {}", ex.getMessage(), ex);
             assertNotNull("Null object returned", result);
         }
     }
