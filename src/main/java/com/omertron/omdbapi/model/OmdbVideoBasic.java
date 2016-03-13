@@ -32,6 +32,8 @@ public class OmdbVideoBasic extends AbstractJsonMapping implements Serializable 
     private String imdbID = "";
     @JsonProperty("Type")
     private String type = "";
+    @JsonProperty("Poster")
+    private String poster = "";
 
     //<editor-fold defaultstate="collapsed" desc="Getter Methods">
     public String getTitle() {
@@ -48,6 +50,10 @@ public class OmdbVideoBasic extends AbstractJsonMapping implements Serializable 
 
     public String getType() {
         return type;
+    }
+
+    public String getPoster() {
+        return poster;
     }
     //</editor-fold>
 
@@ -66,6 +72,10 @@ public class OmdbVideoBasic extends AbstractJsonMapping implements Serializable 
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public void setPoster(String poster) {
+        this.poster = poster;
     }
     //</editor-fold>
 }

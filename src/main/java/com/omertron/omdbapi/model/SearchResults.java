@@ -26,9 +26,15 @@ public class SearchResults extends AbstractJsonMapping {
 
     @JsonProperty("Search")
     private List<OmdbVideoBasic> results;
+    @JsonProperty("totalResults")
+    private int totalResults;
 
     public List<OmdbVideoBasic> getResults() {
         return results;
+    }
+
+    public int getTotalResults() {
+        return totalResults;
     }
 
     public void setResults(List<OmdbVideoBasic> results) {
@@ -41,5 +47,9 @@ public class SearchResults extends AbstractJsonMapping {
             setError(results.size() + " results returned");
             this.results = results;
         }
+    }
+
+    public void setTotalResults(int totalResults) {
+        this.totalResults = totalResults;
     }
 }

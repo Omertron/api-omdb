@@ -45,8 +45,6 @@ public class OmdbVideoFull extends OmdbVideoBasic implements Serializable {
     private String actors = "";
     @JsonProperty("Plot")
     private String plot = "";
-    @JsonProperty("Poster")
-    private String poster = "";
     @JsonProperty("imdbRating")
     private String imdbRating = "";
     @JsonProperty("imdbVotes")
@@ -72,6 +70,8 @@ public class OmdbVideoFull extends OmdbVideoBasic implements Serializable {
     private String tomatoUserRating = "";
     @JsonProperty("tomatoUserReviews")
     private String tomatoUserReviews = "";
+    @JsonProperty("tomatoURL")
+    private String tomatoURL = "";
     @JsonProperty("DVD")
     private String tomatoDvd = "";
     @JsonProperty("BoxOffice")
@@ -118,10 +118,6 @@ public class OmdbVideoFull extends OmdbVideoBasic implements Serializable {
 
     public String getPlot() {
         return plot;
-    }
-
-    public String getPoster() {
-        return poster;
     }
 
     public String getImdbRating() {
@@ -203,6 +199,10 @@ public class OmdbVideoFull extends OmdbVideoBasic implements Serializable {
     public int getMetascore() {
         return metascore;
     }
+
+    public String getTomatoURL() {
+        return tomatoURL;
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Setter Methods">
@@ -236,10 +236,6 @@ public class OmdbVideoFull extends OmdbVideoBasic implements Serializable {
 
     public void setPlot(String plot) {
         this.plot = plot;
-    }
-
-    public void setPoster(String poster) {
-        this.poster = poster;
     }
 
     public void setImdbRating(String imdbRating) {
@@ -322,6 +318,10 @@ public class OmdbVideoFull extends OmdbVideoBasic implements Serializable {
         if (NumberUtils.isParsable(metascore)) {
             this.metascore = NumberUtils.toInt(metascore);
         }
+    }
+
+    public void setTomatoURL(String tomatoURL) {
+        this.tomatoURL = tomatoURL;
     }
     //</editor-fold>
 
