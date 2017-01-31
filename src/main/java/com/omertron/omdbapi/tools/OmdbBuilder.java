@@ -174,9 +174,20 @@ public final class OmdbBuilder {
      *
      * @return
      */
+    @Deprecated
     public OmdbBuilder setPlotLong() {
-        if (!PlotType.isDefault(PlotType.LONG)) {
-            params.add(Param.PLOT, PlotType.LONG);
+        setPlotFull();
+        return this;
+    }
+
+    /**
+     * Return the long plot
+     *
+     * @return
+     */
+    public OmdbBuilder setPlotFull() {
+        if (!PlotType.isDefault(PlotType.FULL)) {
+            params.add(Param.PLOT, PlotType.FULL);
         }
         return this;
     }

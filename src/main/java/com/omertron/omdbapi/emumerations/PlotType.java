@@ -28,7 +28,7 @@ public enum PlotType {
     /**
      * The longer version of the plot
      */
-    LONG;
+    FULL;
     private static final PlotType DEFAULT = PlotType.SHORT;
 
     /**
