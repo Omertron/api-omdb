@@ -86,6 +86,10 @@ public class OmdbVideoFull extends OmdbVideoBasic implements Serializable {
     private String awards = "";
     @JsonProperty("Metascore")
     private int metascore = 0;
+    @JsonProperty("Season")
+    private Integer season;
+    @JsonProperty("Episode")
+    private Integer episode;
 
     //<editor-fold defaultstate="collapsed" desc="Getter Methods">
     public String getRated() {
@@ -202,6 +206,14 @@ public class OmdbVideoFull extends OmdbVideoBasic implements Serializable {
 
     public String getTomatoURL() {
         return tomatoURL;
+    }
+
+    public Integer getSeason() {
+        return season;
+    }
+
+    public Integer getEpisode() {
+        return episode;
     }
     //</editor-fold>
 
@@ -322,6 +334,14 @@ public class OmdbVideoFull extends OmdbVideoBasic implements Serializable {
 
     public void setTomatoURL(String tomatoURL) {
         this.tomatoURL = tomatoURL;
+    }
+
+    public void setSeason(Integer season) {
+        this.season = season;
+    }
+
+    public void setEpisode(Integer episode) {
+        this.episode = episode;
     }
     //</editor-fold>
 

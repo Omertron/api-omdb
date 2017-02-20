@@ -34,9 +34,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public class OmdbParameters {
 
-    private final Map<Param, Object> parameters = new EnumMap<Param, Object>(Param.class);
+    private final Map<Param, Object> parameters = new EnumMap<>(Param.class);
     // Defaults for parameters
-    private final Map<Param, Object> defaults = new EnumMap<Param, Object>(Param.class);
+    private final Map<Param, Object> defaults = new EnumMap<>(Param.class);
 
     /**
      * Construct an empty set of parameters
