@@ -22,7 +22,7 @@ Project Usage
 
 The API usage is very simple. Just instantiate the object:
 
-    OmdbApi omdb = new OmdbApi();
+    OmdbApi omdb = new OmdbApi("apikey");
 
 Then call the `search` or `getInfo` methods to get what you are looking for.
 
