@@ -68,7 +68,13 @@ public enum Param {
     /**
      * API version.
      */
-    VERSION("v=");
+    VERSION("v="),
+    
+    /**
+     * API Key.
+     * Added to support the APIKey the interface contract
+     */    
+    APIKEY("apikey=");
 
     private final String value;
 

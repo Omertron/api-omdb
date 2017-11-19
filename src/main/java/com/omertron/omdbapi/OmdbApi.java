@@ -25,6 +25,8 @@ import com.omertron.omdbapi.model.SearchResults;
 import com.omertron.omdbapi.tools.OmdbBuilder;
 import com.omertron.omdbapi.tools.OmdbParameters;
 import com.omertron.omdbapi.tools.OmdbUrlBuilder;
+import com.omertron.omdbapi.tools.Param;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -54,6 +56,7 @@ public class OmdbApi {
     private static final int HTTP_STATUS_500 = 500;
     private static final String DEFAULT_CHARSET = "UTF-8";
     private final Charset charset;
+    private String apiKey;
 
     /**
      * Create an instance of the API with a default HTTP Client
@@ -71,6 +74,15 @@ public class OmdbApi {
         this.httpClient = httpClient;
         this.charset = Charset.forName(DEFAULT_CHARSET);
     }
+    
+    /**
+     * Create an instance of the API with a default HTTP Client, and setting the ApiKey
+     */
+    public OmdbApi(String apiKey) {
+        this(new SimpleHttpClientBuilder().build());
+        this.apiKey = apiKey;
+    }    
+    
 
     private String requestWebPage(URL url) throws OMDBException {
         LOG.trace("Requesting: {}", url.toString());
@@ -106,7 +118,7 @@ public class OmdbApi {
      */
     public SearchResults search(OmdbParameters searchParams) throws OMDBException {
         SearchResults resultList;
-
+        searchParams.add(Param.APIKEY, this.apiKey);
         String url = OmdbUrlBuilder.create(searchParams);
         LOG.info("URL: {}", url);
 
@@ -132,6 +144,7 @@ public class OmdbApi {
      */
     public SearchResults search(String title) throws OMDBException {
         return search(new OmdbBuilder()
+        		.setApiKey(apiKey)
                 .setSearchTerm(title)
                 .build());
     }
@@ -146,6 +159,7 @@ public class OmdbApi {
      */
     public SearchResults search(String title, int year) throws OMDBException {
         return search(new OmdbBuilder()
+        		.setApiKey(apiKey)
                 .setSearchTerm(title)
                 .setYear(year)
                 .build());
@@ -160,6 +174,7 @@ public class OmdbApi {
      */
     public OmdbVideoFull getInfo(OmdbParameters parameters) throws OMDBException {
         OmdbVideoFull result;
+        parameters.add(Param.APIKEY, this.apiKey);
         URL url = OmdbUrlBuilder.createUrl(parameters);
 
         // Get the JSON

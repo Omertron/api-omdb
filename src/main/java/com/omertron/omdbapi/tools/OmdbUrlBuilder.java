@@ -49,6 +49,17 @@ public class OmdbUrlBuilder {
         StringBuilder sb = new StringBuilder(BASE_URL);
 
         sb.append(DELIMITER_FIRST);
+        //Add the APIKey first
+        if (params.has(Param.APIKEY)) {
+            String apikey = (String) params.get(Param.APIKEY);
+            sb.append(Param.APIKEY.getValue()).append(apikey);
+        } else {
+                throw new OMDBException(ApiExceptionType.AUTH_FAILURE, "Must include an ApiKey to make a call");
+            }
+        
+        //Needed for everything after
+        sb.append(DELIMITER_SUBSEQUENT);
+        
         if (params.has(Param.SEARCH)) {
             String search = (String) params.get(Param.SEARCH);
             sb.append(Param.SEARCH.getValue()).append(search.replace(" ", "+"));
