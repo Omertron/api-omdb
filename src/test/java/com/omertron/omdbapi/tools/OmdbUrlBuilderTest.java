@@ -40,6 +40,7 @@ public class OmdbUrlBuilderTest {
 
     // Logger
     private static final Logger LOG = LoggerFactory.getLogger(OmdbUrlBuilderTest.class);
+    private static final String apiKey = "123456"; //SET ME
 
     @BeforeClass
     public static void setUpClass() {
@@ -50,8 +51,8 @@ public class OmdbUrlBuilderTest {
     public void testCreateSearch() throws OMDBException {
         LOG.info("Create Search");
 
-        String expResult = "http://www.omdbapi.com/?s=Star+Wars&y=1977";
-        String result = OmdbUrlBuilder.create(new OmdbBuilder().setSearchTerm("Star Wars").setYear(1977).build());
+        String expResult = "http://www.omdbapi.com/?apikey=123456&s=Star+Wars&y=1977";
+        String result = OmdbUrlBuilder.create(new OmdbBuilder().setApiKey(apiKey).setSearchTerm("Star Wars").setYear(1977).build());
         assertEquals("Failed text search", expResult, result);
     }
 
@@ -59,8 +60,8 @@ public class OmdbUrlBuilderTest {
     public void testCreateTitle() throws OMDBException {
         LOG.info("Create Title");
 
-        String expResult = "http://www.omdbapi.com/?t=True+Grit&y=1969";
-        String result = OmdbUrlBuilder.create(new OmdbBuilder().setTitle("True Grit").setYear(1969).build());
+        String expResult = "http://www.omdbapi.com/?apikey=123456&t=True+Grit&y=1969";
+        String result = OmdbUrlBuilder.create(new OmdbBuilder().setApiKey(apiKey).setTitle("True Grit").setYear(1969).build());
 
         assertEquals("Failed title search", expResult, result);
     }
@@ -69,8 +70,8 @@ public class OmdbUrlBuilderTest {
     public void testCreateImdb() throws OMDBException {
         LOG.info("Create IMDB");
 
-        String expResult = "http://www.omdbapi.com/?i=tt1285016";
-        String result = OmdbUrlBuilder.create(new OmdbBuilder().setImdbId("tt1285016").build());
+        String expResult = "http://www.omdbapi.com/?apikey=123456&i=tt1285016";
+        String result = OmdbUrlBuilder.create(new OmdbBuilder().setApiKey(apiKey).setImdbId("tt1285016").build());
 
         assertEquals("Failed Search test", expResult, result);
     }
@@ -80,7 +81,7 @@ public class OmdbUrlBuilderTest {
         LOG.info("Test ResultType");
 
         final String term = "Star Wars";
-        final String base = "http://www.omdbapi.com/?s=Star+Wars";
+        final String base = "http://www.omdbapi.com/?apikey=123456&s=Star+Wars";
         String expResult, result;
 
         for (ResultType rt : ResultType.values()) {
@@ -93,16 +94,16 @@ public class OmdbUrlBuilderTest {
 
             switch (rt) {
                 case EPISODE:
-                    result = OmdbUrlBuilder.create(new OmdbBuilder().setSearchTerm(term).setTypeEpisode().build());
+                    result = OmdbUrlBuilder.create(new OmdbBuilder().setApiKey(apiKey).setSearchTerm(term).setTypeEpisode().build());
                     break;
                 case MOVIE:
-                    result = OmdbUrlBuilder.create(new OmdbBuilder().setSearchTerm(term).setTypeMovie().build());
+                    result = OmdbUrlBuilder.create(new OmdbBuilder().setApiKey(apiKey).setSearchTerm(term).setTypeMovie().build());
                     break;
                 case SERIES:
-                    result = OmdbUrlBuilder.create(new OmdbBuilder().setSearchTerm(term).setTypeSeries().build());
+                    result = OmdbUrlBuilder.create(new OmdbBuilder().setApiKey(apiKey).setSearchTerm(term).setTypeSeries().build());
                     break;
                 case ALL:
-                    result = OmdbUrlBuilder.create(new OmdbBuilder().setSearchTerm(term).setResultType(rt).build());
+                    result = OmdbUrlBuilder.create(new OmdbBuilder().setApiKey(apiKey).setSearchTerm(term).setResultType(rt).build());
                     break;
                 default:
                     throw new OMDBException(ApiExceptionType.UNKNOWN_CAUSE, "Unknown Result Type: " + rt.toString());

@@ -245,6 +245,21 @@ public final class OmdbBuilder {
         params.add(Param.VERSION, version);
         return this;
     }
+    
+    /**
+     * Set the ApiKey
+     *
+     * @param apiKey The apikey needed for the contract
+     * @return
+     * @throws com.omertron.omdbapi.OMDBException
+     */
+    public OmdbBuilder setApiKey(final String apiKey) throws OMDBException {
+        if (StringUtils.isBlank(apiKey)) {
+            throw new OMDBException(ApiExceptionType.AUTH_FAILURE, "Must provide an ApiKey");
+        }
+        params.add(Param.APIKEY, apiKey);
+        return this;
+    }    
 
     /**
      * Generate the parameters

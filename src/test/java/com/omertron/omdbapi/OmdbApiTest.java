@@ -26,23 +26,26 @@ import com.omertron.omdbapi.tools.OmdbBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Stuart
  */
+@Ignore //These tests are ignored until you add an APIKey
 public class OmdbApiTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(OmdbApiTest.class);
-    private static final OmdbApi OMDB = new OmdbApi();
+    private static final String apiKey = null; //SET ME
+    private static final OmdbApi OMDB = new OmdbApi(apiKey);
     private static final List<TestID> IDS = new ArrayList<>();
     private static final String TESTING = "Testing: '{}'";
 
@@ -52,7 +55,13 @@ public class OmdbApiTest {
 
         IDS.add(new TestID("Blade Runner", 1982, "tt0083658"));
         IDS.add(new TestID("Mr. Robot", 2015, "tt4158110"));
+        
+        //GET AN APIKEY
+        LOG.debug("You must set and APIKEY. Get it from http://www.omdbapi.com/apikey.aspx You could even make a donation etc!!");
+        
     }
+    
+    
 
     @Test
     public void testSearch() throws OMDBException {
@@ -123,7 +132,7 @@ public class OmdbApiTest {
             assertEquals("Wrong movie returned", test.getImdb(), result.getImdbID());
         }
     }
-    
+
     /**
      * Test of getInfo method, of class OmdbApi.
      *
