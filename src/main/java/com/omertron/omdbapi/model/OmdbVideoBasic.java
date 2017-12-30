@@ -60,7 +60,7 @@ public class OmdbVideoBasic extends AbstractJsonMapping implements Serializable 
     //</editor-fold>
 
     public String getShortPlot() {
-        return this.shortplot;
+        return shortplot;
     }
 
     public void setShortPlot(String plot) {
