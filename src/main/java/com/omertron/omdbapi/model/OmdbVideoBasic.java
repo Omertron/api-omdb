@@ -35,7 +35,7 @@ public class OmdbVideoBasic extends AbstractJsonMapping implements Serializable 
     @JsonProperty("Poster")
     private String poster = "";
     @JsonProperty("Plot")
-    private String plot = "";
+    private String shortplot = "";
 
     //<editor-fold defaultstate="collapsed" desc="Getter Methods">
     public String getTitle() {
@@ -59,12 +59,12 @@ public class OmdbVideoBasic extends AbstractJsonMapping implements Serializable 
     }
     //</editor-fold>
 
-    public String getPlot() {
-        return plot;
+    public String getShortPlot() {
+        return this.shortplot;
     }
 
-    public void setPlot(String plot) {
-        this.plot = plot;
+    public void setShortPlot(String plot) {
+        this.shortplot = plot;
     }
 
     //<editor-fold defaultstate="collapsed" desc="Setter Methods">
