@@ -20,6 +20,7 @@
 package com.omertron.omdbapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.omertron.omdbapi.model.OmdbVideoBasic;
 import com.omertron.omdbapi.model.OmdbVideoFull;
 import com.omertron.omdbapi.model.SearchResults;
 import com.omertron.omdbapi.tools.OmdbBuilder;
@@ -133,6 +134,24 @@ public class OmdbApi {
         }
 
         return resultList;
+    }
+    
+    public OmdbVideoFull FullTitleSearch(String title, int year) throws OMDBException{
+        return getInfo(new OmdbBuilder()
+        		.setApiKey(apiKey)
+                .setTitle(title)
+                .setPlotFull()
+                .setYear(year)
+                .build());
+    }
+    
+    public OmdbVideoBasic ShortTitleSearch(String title, int year) throws OMDBException{
+        return getInfo(new OmdbBuilder()
+        		.setApiKey(apiKey)
+                .setTitle(title)
+                .setPlotShort()
+                .setYear(year)
+                .build());
     }
 
     /**
