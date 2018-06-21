@@ -75,15 +75,16 @@ public class OmdbApi {
         this.httpClient = httpClient;
         this.charset = Charset.forName(DEFAULT_CHARSET);
     }
-    
+
     /**
      * Create an instance of the API with a default HTTP Client, and setting the ApiKey
+     *
+     * @param apiKey
      */
     public OmdbApi(String apiKey) {
         this(new SimpleHttpClientBuilder().build());
         this.apiKey = apiKey;
-    }    
-    
+    }
 
     private String requestWebPage(URL url) throws OMDBException {
         LOG.trace("Requesting: {}", url.toString());
@@ -119,9 +120,11 @@ public class OmdbApi {
      */
     public SearchResults search(OmdbParameters searchParams) throws OMDBException {
         SearchResults resultList;
-        searchParams.add(Param.APIKEY, this.apiKey);
+        if (!searchParams.has(Param.APIKEY)) {
+            searchParams.add(Param.APIKEY, this.apiKey);
+        }
         String url = OmdbUrlBuilder.create(searchParams);
-        LOG.info("URL: {}", url);
+        LOG.trace("URL: {}", url);
 
         // Get the JSON
         String jsonData = requestWebPage(OmdbUrlBuilder.generateUrl(url));
@@ -135,19 +138,19 @@ public class OmdbApi {
 
         return resultList;
     }
-    
-    public OmdbVideoFull FullTitleSearch(String title, int year) throws OMDBException{
+
+    public OmdbVideoFull FullTitleSearch(String title, int year) throws OMDBException {
         return getInfo(new OmdbBuilder()
-        		.setApiKey(apiKey)
+                .setApiKey(apiKey)
                 .setTitle(title)
                 .setPlotFull()
                 .setYear(year)
                 .build());
     }
-    
-    public OmdbVideoBasic ShortTitleSearch(String title, int year) throws OMDBException{
+
+    public OmdbVideoBasic ShortTitleSearch(String title, int year) throws OMDBException {
         return getInfo(new OmdbBuilder()
-        		.setApiKey(apiKey)
+                .setApiKey(apiKey)
                 .setTitle(title)
                 .setPlotShort()
                 .setYear(year)
@@ -163,7 +166,7 @@ public class OmdbApi {
      */
     public SearchResults search(String title) throws OMDBException {
         return search(new OmdbBuilder()
-        		.setApiKey(apiKey)
+                .setApiKey(apiKey)
                 .setSearchTerm(title)
                 .build());
     }
@@ -178,7 +181,7 @@ public class OmdbApi {
      */
     public SearchResults search(String title, int year) throws OMDBException {
         return search(new OmdbBuilder()
-        		.setApiKey(apiKey)
+                .setApiKey(apiKey)
                 .setSearchTerm(title)
                 .setYear(year)
                 .build());
@@ -193,7 +196,10 @@ public class OmdbApi {
      */
     public OmdbVideoFull getInfo(OmdbParameters parameters) throws OMDBException {
         OmdbVideoFull result;
-        parameters.add(Param.APIKEY, this.apiKey);
+        //Api key should be added only if parameters do not have it already
+        if (!parameters.has(Param.APIKEY)) {
+            parameters.add(Param.APIKEY, this.apiKey);
+        }
         URL url = OmdbUrlBuilder.createUrl(parameters);
 
         // Get the JSON
